@@ -1,2 +1,2 @@
-# COMP9032
-Assembly
+
+UNSW COMP9032 Microprocessors and Interfacing
