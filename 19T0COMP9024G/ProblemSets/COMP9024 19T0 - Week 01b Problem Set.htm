@@ -1,0 +1,457 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>COMP9024 19T0 - Week 01b Problem Set</title>
+<link rel='stylesheet' type='text/css' href='./course.css'><script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML">
+function changeText(el, newText) {
+  // Safari work around
+  if (el.innerText)
+    el.innerText = newText;
+  else if (el.firstChild && el.firstChild.nodeValue)
+    el.firstChild.nodeValue = newText;
+}
+function toggleVisible(elid) {
+  el1 = document.getElementById(elid);
+  el2 = document.getElementById(elid+"a");
+  if (el1.style.display == "") {
+     el1.style.display = "none";
+     changeText(el2,"show answer");
+  }
+  else {
+     el1.style.display = "";
+     changeText(el2,"hide answer");
+  }
+}
+</script></head>
+<body>
+<div align='center'>
+<table width='100%' border='0'>
+<tr valign='top'>
+<td align='left' width='25%'>
+  <span class='tiny'><a href="http://www.cse.unsw.edu.au/~cs9024/19T0/index.php">COMP9024 19T0</a></span>
+</td>
+<td align='center' width='50%'>
+  <span class='heading'>Week 01b Problem Set</span><br>
+  <span class='subheading'>Abstract Data Objects, Pointers</span>
+</td>
+<td align='right' width='25%'>
+  <span class='tiny'><a href="http://www.handbook.unsw.edu.au/postgraduate/courses/2019/COMP9024.html">Data Structures and Algorithms</a></span>
+</td>
+</table>
+</div><p style='text-align:center;font-size:75%'><a href='/~cs9024/19t0/probs/prob01b/index.php?view=qo'>[Show with no answers]</a> &nbsp; <a href='/~cs9024/19t0/probs/prob01b/index.php?view=all'>[Show with all answers]</a></div>
+
+<ol>
+
+<br>
+<li>(Stack ADO)
+<p>
+Modify the Stack ADO from the lecture (<a href=http://www.cse.unsw.edu.au/~cs9024/19t0/slides/week01b/progs/Stack.h><tt>Stack.h</tt></a> and <a href=http://www.cse.unsw.edu.au/~cs9024/19t0/slides/week01b/progs/Stack.c><tt>Stack.c</tt></a>) to implement a stack of integers.</p>
+
+<p><small>[<a id="q1a" href="##" onclick="toggleVisible('q1')">show answer</a>]</small></p>
+<div id="q1" style="color:#000099;display:none">
+<tt>IntStack.h</tt>
+<pre class="answer">
+// Integer Stack ADO header file
+void StackInit();     // set up empty stack
+int  StackIsEmpty();  // check whether stack is empty
+void StackPush(int);  // insert int on top of stack
+int  StackPop();      // remove int from top of stack
+</pre>
+</p>
+<tt>IntStack.c</tt>
+<pre class="answer">
+// Integer Stack ADO implementation
+#include "IntStack.h"
+#include &lt;assert.h&gt;
+
+#define MAXITEMS 10
+
+static struct {
+   int item[MAXITEMS];
+   int top;
+} stackObject;  // defines the Data Object
+
+void StackInit() {        // set up empty stack
+   stackObject.top = -1;
+}
+
+int StackIsEmpty() {     // check whether stack is empty
+   return (stackObject.top < 0);
+}
+
+void StackPush(int n) {  // insert int on top of stack
+   assert(stackObject.top < MAXITEMS-1);
+   stackObject.top++;
+   int i = stackObject.top;
+   stackObject.item[i] = n;
+}
+
+int StackPop() {         // remove int from top of stack
+   assert(stackObject.top > -1);
+   int i = stackObject.top;
+   int n = stackObject.item[i];
+   stackObject.top--;
+   return n;
+}
+</pre>
+</div>
+
+<br>
+<li>(Input, Command line arguments)
+<ol type="a">
+<li>
+<p>Write a test program for your stack ADO for Exercise 1 that does the following:
+<ul>
+<li> initialise the stack
+<li> prompt the user to input a number <i>n</i>
+<li> check that <i>n</i> is a positive number
+<li> prompt the user to input <i>n</i> numbers and push each number onto the stack
+<li> use the stack to output the <i>n</i> numbers in reverse order
+</ul>
+<p>
+An example of the program executing could be
+<pre class="command_line">
+Enter a positive number: 3
+Enter a number: 2017
+Enter a number: 12
+Enter a number: 24
+24
+12
+2017
+</pre>
+</p>
+
+<li>
+<p>Modify your program for Exercise 2a so that it takes the <i>n</i> numbers from the command line. An example of the program executing could be
+<pre class="command_line">
+<kbd class="shell">./tester 2017 12 24</kbd>
+24
+12
+2017
+</pre>
+</p>
+</ol>
+
+<p><small>[<a id="q2a" href="##" onclick="toggleVisible('q2')">show answer</a>]</small></p>
+<div id="q2" style="color:#000099;display:none">
+<ol type="a">
+<li>First integer stack tester:
+<pre class="answer">
+#include &lt;stdio.h&gt;
+#include "IntStack.h"
+
+int main(void) {
+   int i, n, number;
+
+   StackInit();
+
+   printf("Enter a positive number: ");
+   if (scanf("%d", &n) == 1 && (n > 0)) {   // test if scanf successful and returns positive number
+      for (i = 0; i < n; i++) {
+	 printf("Enter a number: ");
+	 scanf("%d", &number);
+	 StackPush(number);
+      }
+      while (!StackIsEmpty()) {
+	 printf("%d\n", StackPop());
+      }
+   }
+   return 0;
+}
+</pre>
+</p>
+<li>Second integer stack tester:
+<pre class="answer">
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include "IntStack.h"
+
+int main(int argc, char *argv[]) {
+   int i;
+
+   StackInit();
+   for (i = 1; i < argc; i++) {
+      StackPush(atoi(argv[i]));
+   }
+   while (!StackIsEmpty()) {
+      printf("%d\n", StackPop());
+   }
+   return 0;
+}
+</pre>
+</ol>
+</div>
+
+<br>
+<li>(Stack ADO, Compilation)
+<p>
+A stack can be used to convert a positive decimal number <i>n</i> to a different numeral system with base <i>k</i> according to the following algorithm:
+</p>
+&nbsp;&nbsp;<b>while</b> n&gt;0 <b>do</b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;push <i>n</i><tt>%</tt><i>k</i> onto the stack
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>n</i> = <i>n</i> <tt>/</tt> <i>k</i>
+<br>
+&nbsp;&nbsp;<b>end while</b>
+<p>
+The result can be displayed by printing the numbers as they are popped off the stack. Example (<i>k</i>=2):
+<pre>
+n = 13          --> push 1 (= 13%2)
+n = 6  (= 13/2) --> push 0 (= 6%2)
+n = 3  (=  6/2) --> push 1 (= 3%2)
+n = 1  (=  3/2) --> push 1 (= 1%2)
+n = 0  (=  1/2)
+Result: 1101
+</pre>
+</p>
+<p>
+Using your stack ADO for Exercise 1, write a C-program that implements this algorithm to convert to base <i>k</i>=2 a number given on the command line. Design a <tt>Makefile</tt> to compile this program along with the integer stack ADO implementation.
+</p>
+<p>
+An example of program compilation and execution could be
+</p>
+<pre class="command_line">
+<kbd class="shell">make</kbd>
+gcc -Wall -Werror -c binary.c
+gcc -Wall -Werror -c IntStack.c
+gcc -o binary binary.o IntStack.o
+<kbd class="shell">./binary 13</kbd>
+1101
+<kbd class="shell">./binary 128</kbd>
+10000000
+<kbd class="shell">./binary 127</kbd>
+1111111
+</pre>
+
+<p><small>[<a id="q3a" href="##" onclick="toggleVisible('q3')">show answer</a>]</small></p>
+<div id="q3" style="color:#000099;display:none">
+<pre class="answer">
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include "IntStack.h"
+
+int main(int argc, char *argv[]) {
+   int n;
+
+   if (argc != 2) {
+      printf("Usage: %s number\n", argv[0]);
+      return 1;
+   }
+
+   StackInit();
+   n = atoi(argv[1]);
+   while (n > 0) {
+      StackPush(n % 2);
+      n = n / 2;
+   }
+   while (!StackIsEmpty()) {
+      printf("%d", StackPop());
+   }
+   putchar('\n');
+   return 0;
+}
+</pre>
+</p>
+<tt>Makefile</tt>
+<pre class="answer">
+binary : binary.o IntStack.o
+	gcc -o binary binary.o IntStack.o
+
+binary.o : binary.c IntStack.h
+	gcc -Wall -Werror -c binary.c
+
+IntStack.o : IntStack.c IntStack.h
+	gcc -Wall -Werror -c IntStack.c
+</pre>
+</div>
+
+<br>
+<li>(Queue ADO)
+<p>
+Modify your integer stack ADO for Exercise 1 to an integer queue ADO.
+</p>
+<p>
+Hint: A <i>queue</i> is a FIFO data structure (first in, first out). The principal operations are to <i>enqueue</i> and to <i>dequeue</i> elements. Elements are dequeued in the same order in which they have been enqueued. Below is a sample header file to get you started.
+</p>
+<tt>IntQueue.h</tt>
+<pre>
+// Integer Queue ADO header file
+void QueueInit();        // set up empty queue
+int  QueueIsEmpty();     // check whether queue is empty
+void QueueEnqueue(int);  // insert int at end of queue
+int  QueueDequeue();     // remove int from front of queue
+</pre>
+</p>
+
+<div style="background-color:lightyellow;">
+<p><i>We have created a script that can automatically test your implementation. To run this test you can execute the </i><tt>dryrun</tt><i> program for this week. It expects to find two files named </i><tt>IntQueue.c</tt><i> and <tt>IntQueue.h</tt> in the current directory that provide an implementation of a queue ADO with the four queue functions shown above. You can use dryrun as follows:</i></p>
+<pre class="command_line">
+<kbd class="shell">~cs9024/bin/dryrun prob01b</kbd>
+</pre>
+</div>
+
+
+<p><small>[<a id="q4a" href="##" onclick="toggleVisible('q4')">show answer</a>]</small></p>
+<div id="q4" style="color:#000099;display:none">
+<tt>IntQueue.c</tt>
+<pre class="answer">
+// Integer Queue ADO implementation
+#include "IntQueue.h"
+#include &lt;assert.h&gt;
+
+#define MAXITEMS 10
+static struct {
+   int item[MAXITEMS];
+   int top;
+} queueObject;  // defines the Data Object
+
+void QueueInit() {          // set up empty queue
+   queueObject.top = -1;
+}
+
+int QueueIsEmpty() {        // check whether queue is empty
+   return (queueObject.top < 0);
+}
+
+void QueueEnqueue(int n) {  // insert int at end of queue
+   assert(queueObject.top < MAXITEMS-1);
+   queueObject.top++;
+   int i;
+   for (i = queueObject.top; i > 0; i--) {
+      queueObject.item[i] = queueObject.item[i-1]; // move all elements up
+   }
+   queueObject.item[0] = n; // add element at end of queue
+}
+
+int QueueDequeue() {        // remove int from front of queue
+   assert(queueObject.top > -1);
+   int i = queueObject.top;
+   int n = queueObject.item[i];
+   queueObject.top--;
+   return n;
+}
+</pre>
+</div>
+
+<br>
+<li>(Pointers)
+<p>
+<ol type="a">
+<li>
+Given the following definition:
+ <pre>
+int data[12] = {5, 3, 6, 2, 7, 4, 9, 1, 8};
+</pre>
+ and assuming that <i>&amp;data[0] == 0x10000</i>, what are the values of the following expressions?
+<p><table border="1" cellpadding="8">
+ <tr><td> data + 4 </td></tr>
+ <tr><td> *data + 4 </td></tr>
+ <tr><td> *(data + 4) </td></tr>
+ <tr><td> data[4] </td></tr>
+ <tr><td> *(data + *(data + 3)) </td></tr>
+ <tr><td> data[data[2]] </td></tr>
+</table></p>
+
+<li>
+Consider the following piece of code:
+<pre>
+typedef struct {
+   int   studentID;
+   int   age;
+   char  gender;
+   float WAM;
+} PersonT;
+
+PersonT per1;
+PersonT per2;
+PersonT *ptr;
+
+ptr = &amp;per1;
+per1.studentID = 3141592;
+ptr-&gt;gender = 'M';
+ptr = &amp;per2;
+ptr-&gt;studentID = 2718281;
+ptr-&gt;gender = 'F';
+per1.age = 25;
+per2.age = 24;
+ptr = &amp;per1;
+per2.WAM = 86.0;
+ptr-&gt;WAM = 72.625;
+</pre>
+<p>What are the values of the fields in the <i>per1</i> and <i>per2</i> record after execution of the above statements?</p>
+<p><i>Hint:</i> &nbsp;<tt>ptr-&gt;t</tt>&nbsp; means the same as &nbsp;<tt>(*ptr).t</tt>
+</ol>
+
+<p><small>[<a id="q5a" href="##" onclick="toggleVisible('q5')">show answer</a>]</small></p>
+<div id="q5" style="color:#000099;display:none">
+<p><table border="1" cellpadding="8" style="color:#000099">
+ <tr><td> data + 4              </td><td> == 0x10000 + 4 * 4 bytes == 0x10010 </td></tr>
+ <tr><td> *data + 4             </td><td> == data[0] + 4 == 5 + 4 == 9 </td></tr>
+ <tr><td> *(data + 4)           </td><td> == data[4] == 7 </td></tr>
+ <tr><td> data[4]               </td><td> == 7 </td></tr>
+ <tr><td> *(data + *(data + 3)) </td><td> == *(data + data[3]) == *(data + 2) == data[2] == 6 </td></tr>
+ <trd><td> data[data[2]]         </td><td> == data[6] == 9 </td></tr>
+</table></p>
+<p>
+<table border="1" cellpadding="8" style="color:#000099">
+ <tr><td> per1.studentID     </td><td> == 3141592 </td></tr>
+ <trd><td> per1.age      </td><td> == 25 </td></tr>
+ <tr><td> per1.gender   </td><td> == 'M' </td></tr>
+ <tr><td> per1.WAM </td><td> == 72.625</td></tr>
+ <tr><td> per2.studentID     </td><td> == 2718281 </td></tr>
+ <tr><td> per2.age      </td><td> == 24 </td></tr>
+ <tr><td> per2.gender   </td><td> == 'F' </td></tr>
+ <tr><td> per2.WAM </td><td> == 86.0 </td></tr>
+</table>
+</p>
+</div>
+
+<br>
+<li><b>Challenge Exercise</b>
+<p>Write a C-program that takes 1 command line argument and prints all its <i>prefixes</i> in decreasing order of length. You are <i>not</i> permitted to use any library functions other than <tt>printf()</tt>. You are also <i>not</i> permitted to use any array other than <tt>argv[]</tt>.
+</p>
+An example of the program executing could be
+<pre class="command_line">
+<kbd class="shell">./prefixes Programming</kbd>
+Programming
+Programmin
+Programmi
+Programm
+Program
+Progra
+Progr
+Prog
+Pro
+Pr
+P
+</pre>
+
+<p><small>[<a id="q6a" href="##" onclick="toggleVisible('q6')">show answer</a>]</small></p>
+<div id="q6" style="color:#000099;display:none">
+<pre class="answer">
+#include &lt;stdio.h&gt;
+
+int main(int argc, char *argv[]) {
+   char *start, *end;
+
+   if (argc == 2) {
+      start = argv[1];
+      end = argv[1];
+      while (*end != '\0') {    // find address of terminating '\0'
+         end++;
+      }
+      while (start != end) {
+         printf("%s\n", start); // print string from start to '\0'
+         end--;                 // move end pointer up
+         *end = '\0';           // overwrite last char by '\0'
+      }
+   }
+   return 0;
+}
+</pre>
+</div>
+
+</ol>
+</body>
+</html>

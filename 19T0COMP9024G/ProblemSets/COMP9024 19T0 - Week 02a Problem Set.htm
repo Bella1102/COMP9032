@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>COMP9024 19T0 - Week 02a Problem Set</title>
+<link rel='stylesheet' type='text/css' href='./course.css'><script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML">
+function changeText(el, newText) {
+  // Safari work around
+  if (el.innerText)
+    el.innerText = newText;
+  else if (el.firstChild && el.firstChild.nodeValue)
+    el.firstChild.nodeValue = newText;
+}
+function toggleVisible(elid) {
+  el1 = document.getElementById(elid);
+  el2 = document.getElementById(elid+"a");
+  if (el1.style.display == "") {
+     el1.style.display = "none";
+     changeText(el2,"show answer");
+  }
+  else {
+     el1.style.display = "";
+     changeText(el2,"hide answer");
+  }
+}
+</script></head>
+<body>
+<div align='center'>
+<table width='100%' border='0'>
+<tr valign='top'>
+<td align='left' width='25%'>
+  <span class='tiny'><a href="http://www.cse.unsw.edu.au/~cs9024/19T0/index.php">COMP9024 19T0</a></span>
+</td>
+<td align='center' width='50%'>
+  <span class='heading'>Week 02a Problem Set</span><br>
+  <span class='subheading'>Dynamic Data Structures</span>
+</td>
+<td align='right' width='25%'>
+  <span class='tiny'><a href="http://www.handbook.unsw.edu.au/postgraduate/courses/2019/COMP9024.html">Data Structures and Algorithms</a></span>
+</td>
+</table>
+</div><p style='text-align:center;font-size:75%'><a href='/~cs9024/19t0/probs/prob02a/index.php?view=qo'>[Show with no answers]</a> &nbsp; <a href='/~cs9024/19t0/probs/prob02a/index.php?view=all'>[Show with all answers]</a></div>
+
+<ol>
+
+<br>
+<li>(Memory management)
+
+<p>
+Consider the following function:
+<pre>
+/* Makes an array of 10 integers and returns a pointer to it */
+
+int *makeArrayOfInts(void) {
+   int arr[10];
+   int i;
+   for (i=0; i&lt;10; i++) {
+      arr[i] = i;
+   }
+   return arr;
+}
+</pre>
+<p>Explain what is wrong with this function. Rewrite the function so that it correctly achieves the intended result using &nbsp;<tt>malloc()</tt>.</p>
+<p><small>[<a id="q1a" href="##" onclick="toggleVisible('q1')">show answer</a>]</small></p>
+<div id="q1" style="color:#000099;display:none">
+<p>The function is erroneous because the array <tt>arr</tt> will cease to exist after the line <tt>return arr</tt>, since <tt>arr</tt> is local to this function and gets destroyed once the function returns.
+So the caller will get a pointer to something that doesn't exist anymore, and you will start to see garbage, segmentation faults, and other errors.</p>
+<p>
+Arrays created with <tt>malloc()</tt> are stored in a separate place in memory, the heap, which ensures they live on indefinitely until you free them yourself.
+</p>
+The correctly implemented function is as follows:
+<pre class="answer">
+int *makeArrayOfInts() {
+   int *arr = malloc(sizeof(int) * 10);
+   int i;
+   for (i=0; i&lt;10; i++) {
+      arr[i] = i;
+   }
+   return arr;  // this is fine because the array itself will live on
+}
+</pre></p>
+</div>
+
+<br>
+<li>(Memory management)
+<p>
+Consider the following program:
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void func(int *a) {
+   a = malloc(sizeof(int));
+}
+
+int main(void) {
+   int *p;
+   func(p);
+   *p = 6;
+   printf(&quot;%d\n&quot;,*p);
+   <font color="grey">free(p);</font>
+   return 0;
+}
+</pre>
+<p>Explain what is wrong with this program.
+</p>
+<p><small>[<a id="q2a" href="##" onclick="toggleVisible('q2')">show answer</a>]</small></p>
+<div id="q2" style="color:#000099;display:none">
+<p>The program is not valid because <tt>func()</tt> makes a <i>copy</i> of the pointer <tt>p</tt>. So when <tt>malloc()</tt> is called, the result is assigned to the copied pointer rather than to <tt>p</tt>. Pointer <tt>p</tt> itself is pointing to random memory (e.g., <tt>0x0000</tt>) before and after the function call. Hence, when you dereference it, the program will (likely) crash.</p>
+If you want to use a function to add memory to a pointer, then you need to pass the <i>address</i> of the pointer (i.e. a pointer to a pointer, or "double pointer"):
+<pre class="answer">
+void func(int **a) {
+   <del>a = malloc(sizeof(int));</del>
+   *a = malloc(sizeof(int));
+}
+
+int main(void) {
+   int *p;
+
+   func(&p);
+   *p = 6;
+   printf("%d\n",*p);
+   <font color="grey">free(p);</font>
+   return 0;
+}
+</pre>
+</div>
+
+<br>
+<li>(Dynamic arrays)
+
+<p> Write a C-program that uses a dynamic array of &nbsp; <font color="red"><tt>unsigned long long int </tt></font> numbers (8 bytes, only positive numbers) to compute the <i>n</i>'th Fibonacci number, where <i>n</i> is given as command line argument. For example, <tt><b>./fib 60</b></tt> should result in 1548008755920.
+</p>
+<p>
+Hint: The placeholder &nbsp;<font color="red"><tt>%lld</tt></font>&nbsp; (instead of <tt>%d</tt>) can be used to print an &nbsp;<tt>unsigned long long int</tt>. Remember that the Fibonacci numbers are defined as Fib(1) = 1, Fib(2) = 1 and Fib(<i>n</i>) = Fib(<i>n</i>-1)+Fib(<i>n</i>-2) for <i>n</i>&geq;3.
+
+<p><small>[<a id="q3a" href="##" onclick="toggleVisible('q3')">show answer</a>]</small></p>
+<div id="q3" style="color:#000099;display:none">
+<pre class="answer">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(int argc, char *argv[]) {
+   if (argc != 2) {
+      fprintf(stderr, "Usage: %s number\n", argv[0]);
+      return 1;
+   }
+
+   int n = atoi(argv[1]);
+   if (n > 0) {
+      unsigned long long int *arr = malloc(n * sizeof(unsigned long long int));
+      arr[0] = 1;
+      arr[1] = 1;
+      int i;
+      for (i = 2; i < n; i++) {
+	 arr[i] = arr[i-1] + arr[i-2];
+      }
+      printf("%lld\n", arr[n-1]);
+      free(arr);                   // don't forget to free the array
+   }
+   return 0;
+}
+</pre>
+</div>
+
+<br>
+<li>(Dynamic stacks and queues)
+<ol type="a">
+<li><p>Describe in words how you would implement a <i>queue</i> ADT using a dynamic linked list. Which of the functions for the linked list implementation of a stack from the lecture need to be changed, and how?
+</p>
+</li>
+<li><p>Suppose that you have a stack <i>S</i> containing <i>n</i> elements and a queue <i>Q</i> that is initially empty. Describe how you can use <i>Q</i> to scan <i>S</i> in order to check if it contains a certain element <i>x</i>, with the additional constraint that your algorithm must return the elements back to <i>S</i> in their original order. You should <b>not</b> use an additional array or linked list &mdash; only use <i>S</i> and <i>Q</i>.
+</p>
+</li>
+</ol>
+<p><small>[<a id="q4a" href="##" onclick="toggleVisible('q4')">show answer</a>]</small></p>
+<div id="q4" style="color:#000099;display:none">
+<ol type="a">
+<li>
+<p>
+In the stack ADT, elements are added to ("push") and removed from ("pop") the beginning of the linked list. For a queue, we have two options: either we add ("enqueue") new elements at the end and continue to take elements off ("dequeue") from the beginning. Or we continue to add elements at the beginning and dequeue from the end. Operating on both ends will be more efficient if we use a datastructure with two pointers: one pointing to the <i>first</i> and one pointing to the <i>last</i> element of a list.
+</p>
+<li>
+<p>
+The solution is to use the queue <i>Q</i> to process the elements in two phases. In the first phase, we iteratively pop all the elements from <i>S</i> and enqueue them in <i>Q</i>, then dequeue the elements from <i>Q</i> and push them back onto <i>S</i>. As a result, all the elements are now in reversed order on <i>S</i>. In the second phase, we again pop all the elements from <i>S</i>, but this time we also look for the element <i>x</i>. By again passing the elements through <i>Q</i> and back onto <i>S</i>, we reverse the reversal, thereby restoring the original order of the elements on <i>S</i>.
+</p>
+</ol>
+</div>
+
+<br>
+<li>(Dynamic linked lists)
+<p>
+Write a C-program called <b>llbuild.c</b> that builds a linked list of integers from user input. Your program should use the following functions:</p>
+<ul>
+<li><i>NodeT *makeNode(int value)</i>: taken from the lecture</li>
+<li><i>void freeLL(NodeT *head)</i>: taken from the lecture</li>
+<li><i>void showLL(NodeT *head)</i>: taken from the lecture <b>but needs modification</b></li>
+<li><i>NodeT *joinLL(NodeT *head1, NodeT *head2)</i>: appends linked list <i>head2</i> to list <i>head1</i>. <b>Needs to be implemented.</b></li>
+</ul>
+
+<p>The program:
+<ul>
+  <li> starts with an empty linked list called <i>all</i> (say), initialised to <tt>NULL</tt>
+  <li> prompts the user with the message &quot;Enter a number: &quot;
+  <li> makes a linked list node called <i>new</i> from user's response
+  <li> appends <i>new</i> to <i>all</i>
+  <li> asks for more user input and repeats the cycle
+  <li> the cycle is terminated when the user enters any non-numeric character
+  <li> on termination, the program generates the message &quot;Finished. List is &quot; followed by the contents of the linked list in the format shown below.
+</ul>
+
+<p>A sample interaction is:
+<pre class="command_line">
+<kbd class="shell">./llbuild</kbd>
+Enter an integer:<b> 12</b>
+Enter an integer:<b> 34</b>
+Enter an integer:<b> 56</b>
+Enter an integer:<b> quit</b>
+Finished. List is 12-&gt;34-&gt;56
+</pre>
+</p>
+<p>Note that any non-numeric data 'finishes' the interaction. If the user provides no data, then no list should be output:
+<pre class="command_line">
+<kbd class="shell">./llbuild</kbd>
+Enter an integer:<b>#</b>
+Finished.
+</pre>
+
+<div style="background-color:lightyellow;">
+<p>
+<i>We have created a script that can automatically test your program. To run this test you can execute the </i><tt>dryrun</tt><i> program that corresponds to the problem set and week, i.e. prob03 for this week. It expects to find a program named </i><tt>llbuild.c</tt><i> in the current directory. You can use dryrun as follows:</i></p>
+<pre class="command_line">
+<kbd class="shell">~cs9024/bin/dryrun prob02a</kbd>
+</pre>
+</div>
+
+<p><small>[<a id="q5a" href="##" onclick="toggleVisible('q5')">show answer</a>]</small></p>
+<div id="q5" style="color:#000099;display:none">
+<pre class="answer">
+// llbuild.c: create a linked list from user input, and print
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;assert.h&gt;
+
+typedef struct node {
+   int data;
+   struct node *next;
+} NodeT;
+
+NodeT *joinLL(NodeT *head1, NodeT *head2) {
+// either or both head1 and head2 may be NULL
+   if (head1 == NULL) {
+      head1 = head2;
+   } else {
+      NodeT *p = head1;
+      while (p->next != NULL) {
+         p = p->next;
+      }
+      p->next = head2; // this does nothing if head2 == NULL
+   }
+   return head1;
+}
+
+NodeT *makeNode(int v) {
+   NodeT *new = malloc(sizeof(NodeT));
+   assert(new != NULL);
+   new->data = v;
+   new->next = NULL;
+   return new;
+}
+
+void showLL(NodeT *list) {
+   NodeT *p;
+   for (p = list; p != NULL; p = p->next) {
+      printf("%d", p->data);
+      if (p->next != NULL)
+         printf("->");
+   }
+   putchar('\n');
+}
+
+void freeLL(NodeT *list) {
+    NodeT *p = list;
+    while (p != NULL) {
+        NodeT *temp = p->next;
+        free(p);
+        p = temp;
+    }
+}
+
+int main(void) {
+   NodeT *all = NULL;
+   int data;
+
+   printf("Enter an integer: ");
+   while (scanf("%d", &data) == 1) {
+      NodeT *new = makeNode(data);
+      all = joinLL(all, new);
+      printf("Enter an integer: ");
+   }
+   if (all != NULL) {
+      printf("Finished. List is ");
+      showLL(all);
+      freeLL(all);
+   } else {
+      printf("Finished.\n");
+   }
+   return 0;
+}
+</pre>
+</div>
+
+<br>
+<li><b>Challenge Exercise</b>
+<p>Extend the C-program from the previous exercise to split the linked list in two halves and output the result. If the list has an odd number of elements, then the first list should contain one more element than the second.</p>
+Note that:
+<ul>
+<li> your algorithm should be 'in-place' (so you are not permitted to create a second linked list or use some other data structure such as an array);
+<li> you should not traverse the list more than once (e.g. to count the number of elements and then restart from the beginning).
+</ul>
+<p>An example of the program executing could be
+<pre class="command_line">
+<kbd class="shell">./llsplit</kbd>
+Enter an integer: 421
+Enter an integer: 456732
+Enter an integer: 321
+Enter an integer: 4
+Enter an integer: 86
+Enter an integer: 89342
+Enter an integer: 9
+Enter an integer: #
+Finished. List is 421-&gt;456732-&gt;321-&gt;4-&gt;86-&gt;89342-&gt;9
+First half is 421-&gt;456732-&gt;321-&gt;4
+Second half is 86-&gt;89342-&gt;9
+</pre>
+
+<p><small>[<a id="q6a" href="##" onclick="toggleVisible('q6')">show answer</a>]</small></p>
+<div id="q6" style="color:#000099;display:none">
+<p>The following solution uses a "slow" and a "fast" pointer to traverse the list. The fast pointer always jumps 2 elements ahead. At any time, if <tt>slow</tt> points to the <i>i</i><sup>&nbsp;th</sup> element, then <tt>fast</tt> points to the <i>2&middot;i</i><sup>&nbsp;th</sup> element. Hence, when the fast pointer reaches the end of the list, the slow pointer points to the last element of the first half.</p>
+<pre class="answer">
+NodeT *splitList(NodeT *head) {   // returns pointer to second half
+   assert(head != NULL);
+
+   NodeT *slow = head;
+   NodeT *fast = head->next;
+
+   while (fast != NULL && fast->next != NULL) {
+      slow = slow->next;
+      fast = fast->next->next;
+   }
+   NodeT *head2 = slow->next;     // this becomes head of second half
+   slow->next = NULL;             // cut off at end of first half
+   return head2;
+}
+</pre>
+</div>
+
+</ol>
+</body>
+</html>

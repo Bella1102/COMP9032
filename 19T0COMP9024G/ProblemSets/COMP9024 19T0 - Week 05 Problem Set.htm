@@ -1,0 +1,460 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>COMP9024 19T0 - Week 05 Problem Set</title>
+<link rel='stylesheet' type='text/css' href='./course.css'><script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML">
+function changeText(el, newText) {
+  // Safari work around
+  if (el.innerText)
+    el.innerText = newText;
+  else if (el.firstChild && el.firstChild.nodeValue)
+    el.firstChild.nodeValue = newText;
+}
+function toggleVisible(elid) {
+  el1 = document.getElementById(elid);
+  el2 = document.getElementById(elid+"a");
+  if (el1.style.display == "") {
+     el1.style.display = "none";
+     changeText(el2,"show answer");
+  }
+  else {
+     el1.style.display = "";
+     changeText(el2,"hide answer");
+  }
+}
+</script></head>
+<body>
+<div align='center'>
+<table width='100%' border='0'>
+<tr valign='top'>
+<td align='left' width='25%'>
+  <span class='tiny'><a href="http://www.cse.unsw.edu.au/~cs9024/19T0/index.php">COMP9024 19T0</a></span>
+</td>
+<td align='center' width='50%'>
+  <span class='heading'>Week 05 Problem Set</span><br>
+  <span class='subheading'>Minimum Spanning Trees, Shortest Paths</span>
+</td>
+<td align='right' width='25%'>
+  <span class='tiny'><a href="http://www.handbook.unsw.edu.au/postgraduate/courses/2019/COMP9024.html">Data Structures and Algorithms</a></span>
+</td>
+</table>
+</div><p style='text-align:center;font-size:75%'><a href='/~cs9024/19t0/probs/prob05/index.php?view=qo'>[Show with no answers]</a> &nbsp; <a href='/~cs9024/19t0/probs/prob05/index.php?view=all'>[Show with all answers]</a></div>
+
+<ol>
+
+<br>
+<li>(Graph representations)
+
+<p>For each of the following graphs:
+</p>
+<center><img src="Pic/graph1.png"></center>
+<p>
+Show the concrete data structures if the graph was implemented via:
+</p>
+<ol type='a'>
+<li> adjacency matrix representation (assume full V&times;V matrix)
+<li> adjacency list representation (if non-directional, include both (v,w) and (w,v))
+</ol>
+<p><small>[<a id="q1a" href="##" onclick="toggleVisible('q1')">show answer</a>]</small></p>
+<div id="q1" style="color:#000099;display:none">
+<p><img src="Pic/graph1_a.png"></p>
+<p><img src="Pic/graph1_b.png"></p>
+</div>
+
+<br>
+<li> (MST &ndash; Kruskal's algorithm)
+<p>
+<ol type="a">
+<li>Identify a minimum spanning tree in the following graph (without applying any of the algorithms from the lecture):
+</p>
+<center><img src="Pic/graph4.png"></center>
+What approach did you use in determining the MST?
+<li> <p>Show how Kruskal's algorithm would construct the MST for the above graph.
+How many edges do you have to consider?</p>
+<li> <p>For a graph <i>G=(V,E)</i>, what is the least number of edges that might need to be considered by Kruskal's algorithm, and what is the most number of edges? Add one vertex and edge to the above graph to force Kruskal's algorithm to the worst case.</p>
+</ol>
+</p>
+<p><small>[<a id="q2a" href="##" onclick="toggleVisible('q2')">show answer</a>]</small></p>
+<div id="q2" style="color:#000099;display:none">
+<p>
+<ol type="a">
+<li>The following is the unique MST for the given graph:
+</p>
+<center><img src="Pic/graph4-mst.png"></center>
+<p>
+I suspect (no proof) that most people would use a strategy like:
+</p>
+<ul>
+<li> discount all the high-cost edges to simplify the problem;
+	 this might remove edges with weights 7, 8 and 10
+<li> include all of the low-cost edges to make a start on the
+	solution; this might include edges with weights 1 and 2
+</ul>
+<p>
+This would get you to a partial solution like:
+</p>
+<center><img src="Pic/graph4-mst-partial.png"></center>
+<p>
+Now there are much fewer choices to consider. You could quickly 
+reject the edge 1-3 with weight 4; vertices 1 and 3 are already
+included, using lower cost edges. Similarly, you could reject
+the edge 2-4 with weight 3, because vertex 2 is already included
+using a lower-cost edge. That leaves you with only a choice
+between the 3-6 edge and the 4-7 edge, to connect the {6,7}
+part of the graph to the {1,2,3,4} part. For that, you'd choose
+the lower-cost 4-7 edge. Finally, you need to connect vertex 5
+and there's now only one choice: the 5-7 edge with weight 6.
+</p>
+<li>
+<p>
+In the first iteration of Kruskal's algorithm, we could choose either 1-4 or 6-7,
+since both edges have weight 1. Assume we choose 1-4.
+Since its inclusion produces no cycles, we add it to the MST
+(non-existent edges are indicated by dotted lines):
+</p>
+<center><img src="Pic/graph5a.png"></center>
+<p>
+In the next iteration, we choose 6-7. Its inclusion produces
+no cycles, so we add it to the MST:
+</p>
+<center><img src="Pic/graph5b.png"></center>
+<p>
+In the next iteration, we could choose either 1-2 or 3-4,
+since both edges have weight 2. Assume we choose 1-2.
+Since its inclusion produces no cycles, we add it to the MST:
+</p>
+<center><img src="Pic/graph5c.png"></center>
+<p>
+In the next iteration, we choose 3-4. Its inclusion produces
+no cycles, so we add it to the MST:
+</p>
+<center><img src="Pic/graph5d.png"></center>
+<p>
+In the next iteration, we would first consider the lowest-cost
+unused edge. This is 2-4, but its inclusion would produce a
+cycle, so we ignore it. We then consider 1-3 and 4-7 which
+both have weight 4. If we choose 1-3, that produces a cycle
+so we ignore that edge. If we add 4-7 to the MST, there is no
+cycle and so we include it:
+</p>
+<center><img src="Pic/graph5e.png"></center>
+<p>
+Now the lowest-cost unused edge is 3-6, but its inclusion would produce a
+cycle, so we ignore it. We then consider 5-7. If we add 5-7
+to the MST, there is no cycle and so we include it:
+</p>
+<center><img src="Pic/graph5f.png"></center>
+<p>
+At this stage, all vertices are connected and we have a MST.
+</p>
+<p>
+For this graph, we considered 9 of the 12 possible edges in
+determining the MST.</p>
+<li> <p>For a graph with <i>V</i> vertices and <i>E</i> edges,
+the best case would be when the
+first <i>V-1</i> edges we consider are the lowest cost edges
+and none of these edges leads to a cycle.
+The worst case would be when we had to consider all <i>E</i>
+edges.
+If we added a vertex 8 to the above graph, and connected
+it to vertex 5 with edge cost 11 (or any cost larger than
+all the other edge costs in the graph), we would need to
+consider all edges to construct the MST.</p>
+</ol>
+</div>
+
+<br>
+<li> (MST &ndash; Prim's algorithm)
+
+<p>
+Trace the execution of Prim's algorithm to compute a minimum spanning tree on the following graph:
+</p>
+<center><img src="Pic/graph2.png"></center>
+<p>Choose a random vertex to start with. Draw the resulting minimum spanning tree.</p>
+
+<p><small>[<a id="q3a" href="##" onclick="toggleVisible('q3')">show answer</a>]</small></p>
+<div id="q3" style="color:#000099;display:none">
+<p>If we start at node 5, for example, edges would be found in the following order:
+<ul>
+<li> 5-3
+<li> 3-4
+<li> 4-7
+<li> 1-7
+<li> 6-7
+<li> 0-7
+<li> 0-2
+</ul>
+</p>
+<p>
+The minimum spanning tree:
+</p>
+<center><img src="Pic/graph2-mst.png"></center>
+</div>
+
+<br>
+<li> (Priority queue for Dijkstra's algorithm)</p>
+
+Assume that a priority queue for Dijkstra's algorithm is represented by a global variable <tt>PQueue</tt> of the following structure:
+<pre>
+#define MAX_NODES 1000
+typedef struct {
+   Vertex item[MAX_NODES];  // array of vertices currently in queue
+   int    length;           // #values currently stored in item[] array
+} PQueueT;
+
+PQueueT PQueue;
+</pre>
+<p>
+Further assume that vertices are stored in the <tt>item[]</tt>
+array in the priority queue in <i>no</i> particular order.
+Rather, the <tt>item[]</tt> array acts like a set, and the priority
+is determined by reference to a <tt>priority[0..nV-1]</tt> array.
+</p>
+If the priority queue <tt>PQueue</tt> is initialised as follows:
+<pre>
+void PQueueInit() {
+   PQueue.length = 0;
+}
+</pre>
+</p>
+then give the implementation of the following functions in C:
+<pre>
+// insert vertex v into priority queue PQueue
+// no effect if v is already in the queue
+void joinPQueue(Vertex v) { ... }
+
+// remove the highest priority vertex from PQueue
+// remember: highest priority = lowest value priority[v]
+// returns the removed vertex
+Vertex leavePQueue(int priority[]) { ... }
+</pre>
+<p><small>[<a id="q4a" href="##" onclick="toggleVisible('q4')">show answer</a>]</small></p>
+<div id="q4" style="color:#000099;display:none">
+<p>
+The following are possible implementations for joining and leaving the priority queue:
+</p>
+<pre class="answer">
+void joinPQueue(Vertex v) {
+   assert(PQueue.length < MAX_NODES);
+   int i = 0;
+   while (i < PQueue.length && PQueue.item[i] != v)  // check if v already in queue
+      i++;
+   if (i == PQueue.length) {                         // v not found => add it at the end
+      PQueue.item[PQueue.length] = v;
+      PQueue.length++;
+   }
+}
+
+#define VERY_HIGH_VALUE 999999
+
+Vertex leavePQueue(int priority[]) {
+   assert(PQueue.length > 0);
+
+   int i, bestVertex, bestIndex, bestWeight = VERY_HIGH_VALUE;
+   for (i = 0; i < PQueue.length; i++) {             // find i with min priority[item[i]]
+      if (priority[PQueue.item[i]] < bestWeight) {
+         bestIndex = i;
+         bestWeight = priority[PQueue.item[i]];
+	 bestVertex = PQueue.item[i];                // vertex with lowest value so far
+      }
+   }
+   PQueue.length--;
+   PQueue.item[bestIndex] = PQueue.item[PQueue.length];  // replace dequeued node
+                                                         // by last element in array
+   return bestVertex;
+}
+</pre>
+</div>
+
+<br>
+<li> (Dijkstra's algorithm)
+
+<ol type="a">
+<li><p>Trace the execution of Dijkstra's algorithm on the following graph to compute the minimum distances from source node 0 to all other vertices:
+<center><img src="Pic/sssp-graph.png"></center>
+</p>
+<p>Show the values of <tt>vSet</tt>, <tt>dist[]</tt> and <tt>pred[]</tt> after each iteration.</p>
+
+<li> <p>Implement Dijkstra's algorithm in C using your priority queue functions for Exercise 4 and the Weighted Graph ADT (<a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week05/progs/WGraph.h"><tt>WGraph.h</tt></a>, <a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week05/progs/WGraph.c"><tt>WGraph.c</tt></a>) from the lecture. Your program should
+<ul>
+<li> prompt the user for the number of nodes in a graph,
+<li> prompt the user for a source node,
+<li> build a weighted undirected graph from user input,
+<li> compute and output the distance and a shortest path from the source to every vertex of the graph.
+</ul>
+</p>
+<p>
+An example of the program executing is shown below. The input graph consists of a simple triangle along with a fourth, disconnected node.
+<pre class="command_line">
+<kbd class="shell">./dijkstra</kbd>
+Enter the number of vertices:<b> 4</b>
+Enter the source node: <b>0</b>
+Enter an edge (from):<b> 0</b>
+Enter an edge (to):<b> 1</b>
+Enter the weight:<b> 42</b>
+Enter an edge (from):<b> 0</b>
+Enter an edge (to):<b> 2</b>
+Enter the weight:<b> 25</b>
+Enter an edge (from):<b> 1</b>
+Enter an edge (to):<b> 2</b>
+Enter the weight:<b> 14</b>
+Enter an edge (from):<b> done</b>
+Finished.
+0: distance = 0, shortest path: 0
+1: distance = 39, shortest path: 0-2-1
+2: distance = 25, shortest path: 0-2
+3: no path
+</pre>
+</p>
+<p>
+Note that any non-numeric data can be used to 'finish' the interaction. Test your algorithm with the graph from Exercise 5a.
+</p>
+</ol>
+<p>
+<i>We have created a script that can automatically test your program. To run this test you can execute the </i><tt>dryrun</tt><i> program that corresponds to the problem set and week. It expects to find a program named </i><tt>dijkstra.c</tt><i> in the current directory. You can use dryrun as follows:</i></p>
+<pre class="command_line">
+<kbd class="shell">~cs9024/bin/dryrun prob05</kbd>
+</pre>
+
+<p><small>[<a id="q5a" href="##" onclick="toggleVisible('q5')">show answer</a>]</small></p>
+<div id="q5" style="color:#000099;display:none">
+<ol type="a">
+<li>Initialisation:
+<pre class="answer">
+vSet = { 0, 1, 2, 3, 4, 5, 6, 7 }
+dist = [ 0, &infin;, &infin;, &infin;, &infin;, &infin;, &infin;, &infin; ]
+pred = [ -1, -1, -1, -1, -1, -1, -1, -1 ]
+</pre>
+</p>
+
+The vertex in vSet with minimum dist[] is 0. Relaxation along the edges (0,1,5), (0,2,4) and (0,3,6) results in:
+<pre class="answer">
+vSet = { 1, 2, 3, 4, 5, 6, 7 }
+dist = [ 0, 5, 4, 6, &infin;, &infin;, &infin;, &infin; ]
+pred = [ -1, 0, 0, 0, -1, -1, -1, -1 ]
+</pre>
+</p>
+
+Now the vertex in vSet with minimum dist[] is 2. Considering all edges from 2 to nodes still in vSet:
+<ul>
+<li> relaxation along (2,1,8) does not give us a shorter distance to node 1
+<li> relaxation along (2,3,1) yields a smaller value (4+1 = 5) for dist[3], and pred[3] is updated to 2
+<li> relaxation along (2,4,3) yields a smaller value (4+3 = 7) for dist[4], and pred[4] is updated to 2
+<li> relaxation along (2,5,7)  yields a smaller value (4+7 = 11) for dist[5], and pred[5] is updated to 2
+</ul>
+<pre class="answer">
+vSet = { 1, 3, 4, 5, 6, 7 }
+dist = [ 0, 5, 4, 5, 7, 11, &infin;, &infin; ]
+pred = [ -1, 0, 0, 2, 2, 2, -1, -1 ]
+</pre>
+</p>
+
+Next, we could choose either 1 or 3, since both vertices have minimum distance 5. Suppose we choose 1. Relaxation along (1,5,2) and (1,6,7)  results in new values for nodes 5 and 6:
+<pre class="answer">
+vSet = { 3, 4, 5, 6, 7 }
+dist = [ 0, 5, 4, 5, 7, 7, 12, &infin; ]
+pred = [ -1, 0, 0, 2, 2, 1, 1, -1 ]
+</pre>
+</p>
+
+Now we consider vertex 3. The only adjacent node still in vSet is 4, but there is no shorter path to 4 through 3. Hence no update to dist[] or pred[]:
+<pre class="answer">
+vSet = { 4, 5, 6, 7 }
+dist = [ 0, 5, 4, 5, 7, 7, 12, &infin; ]
+pred = [ -1, 0, 0, 2, 2, 1, 1, -1 ]
+</pre>
+</p>
+
+Next we could choose either vertex 4 or 5. Suppose we choose 4. Edge (4,7,8) is the only one that leads to an update:
+<pre class="answer">
+vSet = { 5, 6, 7 }
+dist = [ 0, 5, 4, 5, 7, 7, 12, 15 ]
+pred = [ -1, 0, 0, 2, 2, 1, 1, 4 ]
+</pre>
+</p>
+
+Vertex 5 is next. Relaxation along edges (5,6,3) and (5,7,6) results in:
+<pre class="answer">
+vSet = { 6, 7 }
+dist = [ 0, 5, 4, 5, 7, 7, 10, 13 ]
+pred = [ -1, 0, 0, 2, 2, 1, 5, 5 ]
+</pre>
+</p>
+
+Of the two vertices left in vSet, 6 has the shorter distance. Edge (6,7,5) does not update the values for node 7 since dist[7]=13&lt;dist[6]+5=15. Hence:
+<pre class="answer">
+vSet = { 7 }
+dist = [ 0, 5, 4, 5, 7, 7, 10, 13 ]
+pred = [ -1, 0, 0, 2, 2, 1, 5, 5 ]
+</pre>
+</p>
+
+Processing the last remaining vertex in vSet will obviously not change anything. The values in pred[] determine shortest paths to all nodes as follows:
+<pre class="answer">
+0: distance = 0, shortest path: 0
+1: distance = 5, shortest path: 0-1
+2: distance = 4, shortest path: 0-2
+3: distance = 5, shortest path: 0-2-3
+4: distance = 7, shortest path: 0-2-4
+5: distance = 7, shortest path: 0-1-5
+6: distance = 10, shortest path: 0-1-5-6
+7: distance = 13, shortest path: 0-1-5-7
+</pre>
+</p>
+
+<li> Sample implementation of Dijkstra's algorithm, including a recursive function to display a path via <tt>pred[]</tt>:
+<pre class="answer">
+void showPath(int v, int pred[]) {
+   if (pred[v] == -1) {
+      printf("%d", v);
+   } else {
+      showPath(pred[v], pred);
+      printf("-%d", v);
+   }
+}
+
+void dijkstraSSSP(Graph g, int nV, Vertex source) {
+   int  dist[MAX_NODES];
+   int  pred[MAX_NODES];
+   bool vSet[MAX_NODES];  // vSet[v] = true <=> v has not been processed
+   int s, t;
+
+   PQueueInit();
+   for (s = 0; s < nV; s++) {
+      joinPQueue(s);
+      dist[s] = VERY_HIGH_VALUE;
+      pred[s] = -1;
+      vSet[s] = true;
+   }
+   dist[source] = 0;
+   while (!PQueueIsEmpty()) {
+      s = leavePQueue(dist);
+      vSet[s] = false;
+      for (t = 0; t < nV; t++) {
+	 if (vSet[t]) {
+	    int weight = adjacent(g,s,t);
+	    if (weight > 0 && dist[s]+weight < dist[t]) {  // relax along (s,t,weight)
+	       dist[t] = dist[s] + weight;
+	       pred[t] = s;
+	    }
+	 }
+      }
+   }
+   for (s = 0; s < nV; s++) {
+      printf("%d: ", s);
+      if (dist[s] < VERY_HIGH_VALUE) {
+	 printf("distance = %d, shortest path: ", dist[s]);
+	 showPath(s, pred);
+	 putchar('\n');
+      } else {
+	 printf("no path\n");
+      }
+   }
+}
+</pre>
+</ol>
+</div>
+
+</ol>
+</body>
+</html>

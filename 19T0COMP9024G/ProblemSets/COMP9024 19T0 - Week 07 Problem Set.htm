@@ -1,0 +1,157 @@
+
+
+<h2>Week 07 Problem Set: Tries, Pattern Matching and Huffman Coding </h2>
+<ol>
+
+
+<br><li>
+<p>
+Consider the following trie, where finishing nodes are shown in red:
+</p>
+<center><img src="Pics/trie.png"></center>
+<p>
+What are the keys?
+
+<p>
+In alphabetical order: a, air, an, anon, car, crab, ma, man, mane, oh, or, orate.
+</p>
+
+</li>
+
+<br><li>
+<p>
+If the following keys were inserted into an initially empty trie
+</p>
+<pre>
+jaws boots axe boo so sore boot boon
+</pre>
+<p>
+what would the final trie look like? Does the order of insertion matter?
+</p>
+
+The trie after all keys are inserted:
+</p>
+<center><img src="Pics/trie2.png"></center>
+<p>
+The order of insertion does not matter.
+The same trie will always result from insertion of the same set of words.
+</p>
+
+</li>
+
+
+
+<br>
+<li>
+For every character in the following pattern, calculate the last-occurrence function (L) used in the Boyer-Moore algorithm and display it as a table:
+
+<pre>
+xywapaswyy
+</pre>
+
+<p>
+See: <a href='https://people.ok.ubc.ca/ylucet/DS/BoyerMoore.html'>Visualizing String Matching</a>. 
+Enter the pattern in both "Text" and 'Pattern", and click on "Search", see "Last" array. 
+</p>
+
+</li>
+
+<br>
+<li>
+Compute a table representing the Knuth-Morris-Pratt failure function for the following pattern:
+
+<pre>
+cgtacgttcgtac
+</pre>
+
+<p>
+See: <a href='https://people.ok.ubc.ca/ylucet/DS/KnuthMorrisPratt.html'>Visualizing String Matching</a>. 
+Click the bottom "Build failure function" in the top panel. 
+</p>
+
+
+</li>
+
+<br>
+<li>
+Consider the following <i>text</i> and <i>pattern</i>:
+<p>
+Text:
+<pre>
+ABCACBBDABCADD
+</pre>
+
+Pattern:
+<pre>
+ABCAD
+</pre>
+
+<p>Identify the sequence of character comparisons required for the Boyer-Moore algorithm. 
+You also need to report total number of character comparisons required.
+</p>
+
+<p>
+See: <a href='https://people.ok.ubc.ca/ylucet/DS/BoyerMoore.html'>Visualizing String Matching</a>. 
+Use the bottom panel to "Pause" and "Step Forward" to <b>slowly visualise</b> each step. 
+</p>
+
+</li>
+
+
+<br>
+<li>
+Consider the following <i>text</i> and <i>pattern</i>:
+<p>
+Text:
+<pre>
+aaabaadaabaaa
+</pre>
+
+Pattern:
+<pre>
+aabaaa
+</pre>
+
+<p>
+Identify the sequence of character comparisons required for the Knuth-Morris-Pratt algorithm.
+You also need to report total number of character comparisons required.
+</p>
+
+<p>
+See: <a href='https://people.ok.ubc.ca/ylucet/DS/KnuthMorrisPratt.html'>Visualizing String Matching</a>.
+Use the bottom panel to "Pause" and "Step Forward" to <b>slowly visualise</b> each step. 
+</p>
+
+</li>
+
+
+<br>
+<li>
+For the following string, calculate frequency array and draw Huffman tree:
+<pre>
+ababbcdcbaabcacbbbs
+</pre>
+
+<p>Also provide the huffman code table for each character. </p>
+
+
+<p>
+See: <a href='https://people.ok.ubc.ca/ylucet/DS/Huffman.html'>Visualizing String Matching</a>.
+Use the bottom panel to "Pause" and "Step Forward" to <b><b>slowly visualise</b></b> each step. 
+</p>
+
+
+
+</li>
+
+
+</li>
+
+
+
+</ol>
+
+<p>
+
+<hr>
+<?=endPage()?>

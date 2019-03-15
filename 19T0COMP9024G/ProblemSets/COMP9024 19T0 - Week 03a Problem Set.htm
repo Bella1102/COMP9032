@@ -1,0 +1,476 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>COMP9024 19T0 - Week 03a Problem Set</title>
+<link rel='stylesheet' type='text/css' href='./course.css'><script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML">
+function changeText(el, newText) {
+  // Safari work around
+  if (el.innerText)
+    el.innerText = newText;
+  else if (el.firstChild && el.firstChild.nodeValue)
+    el.firstChild.nodeValue = newText;
+}
+function toggleVisible(elid) {
+  el1 = document.getElementById(elid);
+  el2 = document.getElementById(elid+"a");
+  if (el1.style.display == "") {
+     el1.style.display = "none";
+     changeText(el2,"show answer");
+  }
+  else {
+     el1.style.display = "";
+     changeText(el2,"hide answer");
+  }
+}
+</script></head>
+<body>
+<div align='center'>
+<table width='100%' border='0'>
+<tr valign='top'>
+<td align='left' width='25%'>
+  <span class='tiny'><a href="http://www.cse.unsw.edu.au/~cs9024/19T0/index.php">COMP9024 19T0</a></span>
+</td>
+<td align='center' width='50%'>
+  <span class='heading'>Week 03a Problem Set</span><br>
+  <span class='subheading'>Graph Data Structures</span>
+</td>
+<td align='right' width='25%'>
+  <span class='tiny'><a href="http://www.handbook.unsw.edu.au/postgraduate/courses/2019/COMP9024.html">Data Structures and Algorithms</a></span>
+</td>
+</table>
+</div><p style='text-align:center;font-size:75%'><a href='/~cs9024/19t0/probs/prob03a/index.php?view=qo'>[Show with no answers]</a> &nbsp; <a href='/~cs9024/19t0/probs/prob03a/index.php?view=all'>[Show with all answers]</a></div>
+
+<ol>
+
+<br>
+<li>(Graph fundamentals)
+<p>
+For the graph
+</p>
+<center><img src="Pic/graph1.png"></center>
+<p>
+give examples of the smallest (but not of size/length 0) and largest of each of the following:
+</p>
+<ol type="a">
+<li> path
+<li> cycle
+<li> spanning tree
+<li> vertex degree
+<li> clique
+</ol>
+
+<p><small>[<a id="q1a" href="##" onclick="toggleVisible('q1')">show answer</a>]</small></p>
+<div id="q1" style="color:#000099;display:none">
+<ol type="a">
+<li> path
+ <ul>
+ <li> smallest: any path with one edge (e.g. a-b or g-m)
+ <li> largest: some path including all nodes (e.g. m-g-h-k-i-j-a-b-c-d-e-f)
+ </ul>
+<li> cycle
+ <ul>
+ <li> smallest: need at least 3 nodes (e.g. i-j-k-i or h-i-k-h)
+ <li> largest: path including most nodes (e.g. g-h-k-i-j-a-b-c-d-e-f-g) (can't involve m)
+ </ul>
+<li> spanning tree
+ <ul>
+ <li> smallest: any spanning tree must include all nodes (the largest path above is an example)
+ <li> largest: same
+ </ul>
+<li> vertex degree
+ <ul>
+ <li> smallest: there is a node that has degree 1 (vertex m)
+ <li> largest: in this graph, 5 (b or f)
+ </ul>
+<li> clique
+ <ul>
+ <li> smallest: any vertex by itself is a clique of size 1
+ <li> largest: this graph has a clique of size 5 (nodes b,c,d,e,f)
+ </ul>
+</ol>
+</div>
+
+<br>
+<li> (Graph representations)
+<p>
+Show how the following graph would be represented by
+</p>
+<ol type="a">
+<li> an adjacency matrix representation (V&timesV matrix with each edge represented twice)
+<li> an adjacency list representation (where each edge appears in two lists, one for <i>v</i> and one for <i>w</i>)
+</ol>
+<center><img src="Pic/graph3.png"></center>
+<p><small>[<a id="q2a" href="##" onclick="toggleVisible('q2')">show answer</a>]</small></p>
+<div id="q2" style="color:#000099;display:none">
+<p>
+<i>(corrected)</i>
+</p>
+<p>
+<center><img src="Pic/graph-reps.png"></center>
+</p>
+</div>
+</li>
+
+<br>
+<li> (Storage costs)
+<p>
+Consider the adjacency matrix and adjacency list representations for graphs.
+Analyse the storage costs for the two representations in more detail in terms of the number
+of vertices <i>V</i> and the number of edges <i>E</i>. Determine roughly
+the V:E ratio at which it is more storage efficient to use an adjacency matrix
+representation vs the adjacenty list representation.
+</p>
+<p>
+For the purposes of the analysis, ignore the cost of storing the
+<tt>GraphRep</tt> structure. Assume that: each pointer is 4 bytes
+long, a <tt>Vertex</tt> value is 4 bytes, a linked-list <i>node</i> is
+8 bytes long and that the adjacency matrix is a complete <i>V</i>&times;<i>V</i>
+matrix. Assume also that each adjacency matrix element is <b>1 byte</b> long.
+(<i>Hint:</i> Defining the matrix elements as 1-byte boolean values rather than 4-byte integers is a simple way to improve the space usage for the adjacency matrix representation.)
+</p>
+
+<p><small>[<a id="q3a" href="##" onclick="toggleVisible('q3')">show answer</a>]</small></p>
+<div id="q3" style="color:#000099;display:none">
+<p>
+The adjacency matrix representation always requires a <i>V</i>&times;<i>V</i>
+matrix, regardless of the number of edges, where each element is 1 byte long.
+It also requires an array of <i>V</i> pointers. This gives a fixed
+size of <i>V&middot;4</i>+<i>V<sup>2</sup></i> bytes.
+</p>
+<p>
+The adjacency list representation requires an array of <i>V</i> pointers
+(the start of each list), with each being 4 bytes long,
+and then one list node for each edge in each list. The total
+number of edge nodes is 2<i>E</i> (each edge <i>(v,w)</i>is stored twice,
+once in the list for <i>v</i> and once in the list for <i>w</i>). Since
+each node requires 8 bytes (vertex+pointer), this gives a size
+of <i>V&middot;4</i>+8&middot;2&middot;<i>E</i>. The total storage is thus <i>V&middot;4</i>+<i>16&middot;E</i>.
+</p>
+<p>
+Since both representations involve <i>V</i> pointers, the difference is
+based on <i>V<sup>2</sup></i> vs <i>16E</i>. So, if
+<i>16E &lt; V<sup>2</sup></i> (or, equivalently, <i>E &lt; V<sup>2</sup>/16</i>),
+then the adjacency list representation will be more storage-efficient.
+Conversely, if <i>E &gt; V<sup>2</sup>/16</i>, then the adjacency matrix
+representation will be more storage-efficient.
+</p>
+<p>
+To pick a concrete example, if <i>V=20</i> and if we have less than 25 edges
+(= 20&middot;20/16), then the adjacency list will be more storage-efficient, otherwise
+the adjacency matrix will be at least as storage-efficient.
+</div>
+
+<br>
+<li>(Storage-efficient representation)
+<p>
+The standard adjacency matrix representation for a graph uses a
+full <i>V&times;V</i> matrix and stores each edge twice (at [v,w]
+and [w,v]). This consumes a lot of space, and wastes a lot of
+space when the graph is sparse. One way to use less space is to
+store just the upper (or lower) triangular part of the matrix,
+as shown in the diagram below:
+</p>
+<center><img src="Pic/adj-matrix.png"></center>
+<p>
+The <i>V&times;V</i> matrix has been replaced by a single 1-dimensional
+array <tt>g.edges[]</tt> containing just the "useful" parts of the matrix.
+</p>
+<p>
+Accessing the elements is no longer as simple as <tt>g.edges[v][w]</tt>.
+Write pseudocode for a method to check whether two
+vertices <tt>v</tt> and <tt>w</tt> are adjacent under the upper-triangle matrix representation of a graph <tt>g</tt>.
+</p>
+
+<p><small>[<a id="q4a" href="##" onclick="toggleVisible('q4')">show answer</a>]</small></p>
+<div id="q4" style="color:#000099;display:none">
+The following solution uses a loop to compute the correct index in the 1-dimensional <tt>edges[]</tt> array:
+<pre class="pseudocode">
+adjacent(g,v,w):
+   <b>Input</b>  graph g in upper-triangle matrix representation
+          v, w vertices such that v&ne;w
+   <b>Output</b> true if v and w adjacent in g, false otherwise
+
+   <b>if</b> v&gt;w <b>then</b>
+      swap v and w        // to ensure v&lt;w
+   <b>end if</b>
+   chunksize=g.nV-1, offset=0
+   <b>for all</b> i=0..v-1 <b>do</b>
+      offset=offset+chunksize
+      chunksize=chunksize-1
+   <b>end if</b>
+   offset=offset+w-v-1
+   <b>if</b> g.edges[offset]=1 <b>then</b> <b>return true</b>
+                        <b>else</b> <b>return false</b>
+   <b>end if</b>
+</pre>
+<p>
+<del>Correction:</del> Correction:<br>
+Alternatively, you can compute the overall offset directly via the formula `(nV-1)+(nV-2)+...+(nV-v)+(w-v-1)=v/2(2*nV-v-1)+(w-v-1)` (assuming that <i>v&lt;w</i>).</p>
+</div>
+
+<br>
+<li>(Graph properties)
+<ol type="a">
+<li><p>Write pseudocode for computing</p>
+<ul>
+<li> the minimum and maximum vertex degree
+<li> all 3-cliques ("triangles")
+</ul>
+<p>of a graph <i>g</i> with <i>n</i> vertices.</p>
+
+<p>
+Your methods should be representation-independent; the only function you should use is to check if two vertices <i>v,w&isin;{0,&hellip;n-1}</i> are adjacent in <i>g</i>.
+</p>
+
+<li><p>Determine the asymptotic complexity of your two algorithms. Assume that the adjacency check is performed in constant time, <i>O(1)</i>.</p>
+
+<li><p>Implement your algorithms in a program <tt>graphAnalyser.c</tt> that
+<ol>
+<li>builds a graph from user input:
+<ul>
+<li>first, the user is prompted for the number of vertices
+<li>then, the user is repeatedly asked to input an egde by entering
+a "from" vertex followed by a "to" vertex
+<li>until any non-numeric character(s) are entered
+</ul>
+<li>computes and outputs the minimum and maximum degree of vertices in the graph
+<li>prints all vertices of minimum degree in ascending order, followed by all vertices of maximum degree in ascending order
+<li>displays all 3-cliques of the graph in ascending order.
+</ol>
+<p>
+Your program should use the Graph ADT from the lecture (<a href=code/Graph.h><tt>Graph.h</tt></a> and <a href=code/Graph.c><tt>Graph.c</tt></a>). These files should not be changed.
+</p>
+<p>
+<i>Hint:</i> You may assume that the graph has a maximum of 1000 nodes.
+</p>
+An example of the program executing is shown below for the graph
+<center><img src="Pic/graph2.png"></center>
+<br>
+<pre class="command_line">
+<kbd class="shell">./graphAnalyser</kbd>
+Enter the number of vertices:<b> 6</b>
+Enter an edge (from):<b> 0</b>
+Enter an edge (to):<b> 1</b>
+Enter an edge (from):<b> 1</b>
+Enter an edge (to):<b> 2</b>
+Enter an edge (from):<b> 4</b>
+Enter an edge (to):<b> 2</b>
+Enter an edge (from):<b> 1</b>
+Enter an edge (to):<b> 3</b>
+Enter an edge (from):<b> 3</b>
+Enter an edge (to):<b> 4</b>
+Enter an edge (from):<b> 1</b>
+Enter an edge (to):<b> 5</b>
+Enter an edge (from):<b> 5</b>
+Enter an edge (to):<b> 3</b>
+Enter an edge (from):<b> 2</b>
+Enter an edge (to):<b> 3</b>
+Enter an edge (from):<b> done</b>
+Finished.
+Minimum degree: 1
+Maximum degree: 4
+Nodes of minimum degree:
+0
+Nodes of maximum degree:
+1
+3
+Triangles:
+1-2-3
+1-3-5
+2-3-4
+</pre>
+</p>
+<p>
+Note that any non-numeric data can be used to 'finish' the interaction.
+</p>
+</ol>
+
+<div style="background-color:lightyellow;">
+<p>
+<i>We have created a script that can automatically test your program. To run this test you can execute the </i><tt>dryrun</tt><i> program that corresponds to the problem set and week. It expects to find a program named </i><tt>graphAnalyser.c</tt><i> in the current directory. You can use dryrun as follows:</i></p>
+<pre class="command_line">
+<kbd class="shell">~cs9024/bin/dryrun prob03</kbd>
+</pre>
+
+</div>
+
+<p><i>Please ensure that your program output follows exactly the format shown in the sample interaction above. In particular, the vertices of minimum and maximum degree and the 3-cliques should be printed in ascending order.</i></p>
+
+
+
+<p><small>[<a id="q5a" href="##" onclick="toggleVisible('q5')">show answer</a>]</small></p>
+<div id="q5" style="color:#000099;display:none">
+The following algorithm uses two nested loops to compute the degree of each vertex. Hence its asymptotic running time is <i>O(n<sup>2</sup>)</i>.
+<pre class="pseudocode">
+MinMaxDegree(g,n):
+   <b>Input</b>  graph g of n vertices
+   <b>Output</b> minimum and maximum vertex degree in g
+
+   min=n-1, max=0
+   <b>for all</b> vertices v&isin;g <b>do</b>
+      deg[v]=0
+      <b>for all</b> vertices w&isin;g, v&ne;w <b>do</b>
+         <b>if</b> v,w adjacent in g <b>then</b>
+	    deg[v]=deg[v]+1
+	 <b>end if</b>
+      <b>end for</b>
+      <b>if</b> deg[v]&lt;min <b>then</b>
+	 min=deg[v]
+      <b>end if</b>
+      <b>if</b> deg[v]&gt;max <b>then</b>
+	 max=deg[v]
+      <b>end if</b>
+   <b>end for</b>
+   <b>return</b> min,max
+</pre>
+</p>
+The following algorithm uses three nested loops to print all 3-cliques in order. Hence its asymptotic running time is <i>O(n<sup>3</sup>)</i>.
+<pre class="pseudocode">
+show3Cliques(g,n):
+   <b>Input</b> graph g of n vertices numbered 0..n-1
+
+   <b>for all</b> i=0..n-3 <b>do</b>
+      <b>for all</b> j=i+1..n-2 <b>do</b>
+	 <b>if</b> i,j adjacent in g <b>then</b>
+            <b>for all</b> k=j+1..n-1 <b>do</b>
+               <b>if</b> i,k adjacent in g &and; j,k adjacent in g <b>then</b>
+	          print i"-"j"-"k
+	       <b>end if</b>
+	    <b>end for</b>
+	  <b>end if</b>
+      <b>end for</b>
+   <b>end for</b>
+</pre>
+</p>
+Sample <tt>graphAnalyser.c</tt>:
+<pre class="answer">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;assert.h&gt;
+#include "Graph.h"
+
+#define MAX_NODES 1000
+
+// determine minimum and maximum degree of graph g with n vertices
+// and output all nodes of those degrees
+void MinMaxDegree(Graph g, int n) {
+   int degree[MAX_NODES];
+   int mindegree = n-1;
+   int maxdegree = 0;
+   int v, w;
+   for (v = 0; v < n; v++) {
+      degree[v] = 0;
+      for (w = 0; w < n; w++) {
+	 if (adjacent(g,v,w))
+	    degree[v]++;
+      }
+      if (degree[v] < mindegree)
+	 mindegree = degree[v];
+      if (degree[v] > maxdegree)
+	 maxdegree = degree[v];
+   }
+   printf("Minimum degree: %d\n", mindegree);
+   printf("Maximum degree: %d\n", maxdegree);
+   
+   printf("Nodes of minimum degree:\n");
+   for (v = 0; v < n; v++) {
+      if (degree[v] == mindegree)
+	 printf("%d\n", v);
+   }
+   printf("Nodes of maximum degree:\n");
+   for (v = 0; v < n; v++) {
+      if (degree[v] == maxdegree)
+	 printf("%d\n", v);
+   }
+}   
+
+// show all 3-cliques of graph g with n nodes
+void Show3Cliques(Graph g, int n) {
+   int i, j, k;
+
+   printf("Triangles:\n");
+   for (i = 0; i < n-2; i++)
+      for (j = i+1; j < n-1; j++)
+	 if (adjacent(g,i,j))
+	    for (k = j+1; k < n; k++)
+	       if (adjacent(g,i,k) && adjacent(g,j,k))
+		  printf("%d-%d-%d\n", i, j, k);
+}
+
+int main(void) {
+   Edge e;
+   int n;
+
+   printf("Enter the number of vertices: ");
+   scanf("%d", &n);
+   Graph g = newGraph(n);
+
+   printf("Enter an edge (from): ");
+   while (scanf("%d", &e.v) == 1) {
+      printf("Enter an edge (to): ");
+      scanf("%d", &e.w);
+      insertEdge(g, e);
+      printf("Enter an edge (from): ");
+   }
+   printf("Finished.\n");
+
+   MinMaxDegree(g, n);
+   Show3Cliques(g, n);
+   freeGraph(g);
+
+   return 0;
+}
+</pre>
+</div>
+
+<br>
+<li><b>Challenge Exercise</b>
+<p>
+Extend the program from the previous exercise to compute the <i>largest</i> size of a clique in a graph. For example, if the input happens to be the complete graph <i>K<sub>5</sub></i> but with any one edge missing, then the output should be 4.
+</p>
+<p><small>[<a id="q6a" href="##" onclick="toggleVisible('q6')">show answer</a>]</small></p>
+<div id="q6" style="color:#000099;display:none">
+Computing the maximum size of a clique in a graph is known to be an <i>NP-hard problem</i>. Hence no tractable algorithm is known. Here is a sample 'brute-force' algorithm that essentially generates-and-tests all possible subsets of vertices to determine the maximum size of a complete subgraph.
+<pre class="answer">
+int maxCliqueSize(Graph g, int nV, int v, int clique[], int k) {
+//
+// g         graph
+// nV        #vertices of g
+// v         next vertex to consider
+// clique[]  some subset of nodes 0..v-1 that forms a clique
+// k         size of that clique
+//
+// returns size of largest complete subgraph of g that extends clique[] with nodes from v..nV-1
+//
+if (v == nV) {                                      // no more vertex to consider
+   return k;
+} else {
+   int k1 = maxCliqueSize(g, nV, v+1, clique, k);   // find largest complete subgraph that
+                                                    // extends clique[] without considering v
+   int i;
+   for (i = 0; i < k; i++)                          // check if v can be added to clique[]:
+      if (!adjacent(g, v, clique[i]))               // if v not adjacent to all nodes in clique[]
+         return k1;                                 // => return largest clique size without v
+
+   clique[k] = v;                                   // add v to clique[]
+   int k2 = maxCliqueSize(g, nV, v+1, clique, k+1); // find largest clique extending clique[]+v
+   if (k2 > k1)
+      return k2;
+   else
+      return k1;
+}
+</pre>
+</p>
+To call this recursive function on a graph <tt>g</tt> with <tt>nV</tt> vertices:
+<pre class="answer">
+int *clique = malloc(nV * sizeof(int));             // allocate memory for an array of vertices
+int m = maxCliqueSize(g, nV, 0, clique, 0);         // start at vertex 0 with clique of size 0
+free(clique);
+</pre>
+</p>
+Click <a href="http://en.wikipedia.org/wiki/Clique_problem">here</a> if you are interested in reading more about the computational aspects of computing cliques including some references to more sophisticated algorithms.
+</div>
+
+</ol>
+</body>
+</html>

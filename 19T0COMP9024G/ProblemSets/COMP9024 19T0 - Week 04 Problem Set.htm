@@ -1,0 +1,611 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>COMP9024 19T0 - Week 04 Problem Set</title>
+<link rel='stylesheet' type='text/css' href='./course.css'><script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML">
+function changeText(el, newText) {
+  // Safari work around
+  if (el.innerText)
+    el.innerText = newText;
+  else if (el.firstChild && el.firstChild.nodeValue)
+    el.firstChild.nodeValue = newText;
+}
+function toggleVisible(elid) {
+  el1 = document.getElementById(elid);
+  el2 = document.getElementById(elid+"a");
+  if (el1.style.display == "") {
+     el1.style.display = "none";
+     changeText(el2,"show answer");
+  }
+  else {
+     el1.style.display = "";
+     changeText(el2,"hide answer");
+  }
+}
+</script></head>
+<body>
+<div align='center'>
+<table width='100%' border='0'>
+<tr valign='top'>
+<td align='left' width='25%'>
+  <span class='tiny'><a href="http://www.cse.unsw.edu.au/~cs9024/19T0/index.php">COMP9024 19T0</a></span>
+</td>
+<td align='center' width='50%'>
+  <span class='heading'>Week 04 Problem Set</span><br>
+  <span class='subheading'>Graph Traversal, Digraphs</span>
+</td>
+<td align='right' width='25%'>
+  <span class='tiny'><a href="http://www.handbook.unsw.edu.au/postgraduate/courses/2019/COMP9024.html">Data Structures and Algorithms</a></span>
+</td>
+</table>
+</div><p style='text-align:center;font-size:75%'><a href='/~cs9024/19t0/probs/prob04/index.php?view=qo'>[Show with no answers]</a> &nbsp; <a href='/~cs9024/19t0/probs/prob04/index.php?view=all'>[Show with all answers]</a></div>
+
+<ol>
+
+<br>
+<li>(Graph traversal: DFS and BFS)
+
+<p>
+Show the order in which the nodes of the graph depicted below are visited by
+</p>
+<ol type="a">
+<li> DFS starting at node 0
+<li> DFS starting at node 3
+<li> BFS starting at node 0
+<li> BFS starting at node 3
+</ol>
+<center><img src="Pic/graph1.png"></center>
+<p>
+Assume the use of a stack for depth-first search (DFS) and a queue for breadth-first search (BFS), respectively. Show the state of the stack or queue explicitly in each step. When choosing which neighbour to visit next, always choose
+the smallest unvisited neighbour.</p>
+
+</p>
+
+<p><small>[<a id="q1a" href="##" onclick="toggleVisible('q1')">show answer</a>]</small></p>
+<div id="q1" style="color:#000099;display:none">
+<ol type="a">
+<li> DFS starting at 0:
+<pre class="pseudocode">
+Current    Stack (top at left)
+-          0
+0          1
+1          2 3 4
+2          5 3 4
+5          6 7 3 4
+6          7 3 4
+7          3 4
+3          4
+4          -
+</pre>
+<li> DFS starting at 3:
+<pre class="pseudocode">
+Current    Stack (top at left)
+-          3
+3          1 2 4 5
+1          0 2 4 5
+0          2 4 5
+2          4 5
+4          5
+5          6 7
+6          7
+7          -
+</pre>
+<li>BFS starting at 0:
+<pre class="pseudocode">
+Current    Queue (front at left)
+-          0
+0          1
+1          2 3 4
+2          3 4 5
+3          4 5
+4          5
+5          6 7
+6          7
+7          -
+</pre>
+<li>BFS starting at 3:
+<pre class="pseudocode">
+Current    Queue (front at left)
+-          3
+3          1 2 4 5
+1          2 4 5 0
+2          4 5 0
+4          5 0
+5          0 6 7
+0          6 7
+6          7
+7          -
+</pre>
+</ol>
+</div>
+
+<br>
+<li>(Hamiltonian/Euler paths and circuits)
+
+<ol type="a">
+<li> <p>
+Identify any Hamiltonian/Euler paths/circuits in the following graphs:
+<center><img src="Pic/euler-hamilton.png"></center>
+
+<li> <p>
+Find an Euler path and an Euler circuit (if they exist) in the following graph:
+</p>
+<center><img src="Pic/graph2.png"></center>
+</ol>
+
+<p><small>[<a id="q2a" href="##" onclick="toggleVisible('q2')">show answer</a>]</small></p>
+<div id="q2" style="color:#000099;display:none">
+<ol type="a">
+<li>
+<p>
+   Graph 1: has both Euler and Hamiltonian paths (e.g. 0-1-2), but cannot have circuits
+as there are no cycles.
+</p>
+<p>
+   Graph 2: has both Euler (e.g. 0-1-2-0) and Hamiltonian paths (e.g. 0-1-2); also has both
+Euler and Hamiltonian circuits (e.g. 0-1-2-0).
+</p>
+<p>
+Graph 3: has neither Euler nor Hamiltonian paths, nor Euler nor Hamiltonian circuits.
+</p>
+<p>
+Graph 4: has Hamiltonian paths (e.g. 0-1-2-3) and a Hamiltonian circuits (e.g. 0-1-2-3-0);
+it has neither an Euler path nor an Euler circuit.
+</p>
+
+<li>
+<p>
+An Euler path: &nbsp; 2-6-5-2-3-0-1-5-0-4-5
+</p>
+<p>
+No Euler circuit since two vertices (2 and 5) have odd degree.
+</p>
+</div>
+
+<br>
+<li>(Cycle check)
+<p>Design an algorithm to check for the existence of a cycle in a graph using depth-first search.
+</p>
+<p><small>[<a id="q3a" href="##" onclick="toggleVisible('q3')">show answer</a>]</small></p>
+<div id="q3" style="color:#000099;display:none">
+<pre class="pseudocode">
+hasCycle(G):
+|  <b>Input</b>  graph G
+|  <b>Output</b> true if G has a cycle, false otherwise
+|
+|  mark all vertices as unvisited
+|  <b>for</b> each vertex v&isin;G <b>do</b>           // make sure to check all connected components
+|  |  <b>if</b> v has not been visited <b>then</b>
+|  |     <del><b>if</b> &not;dfsCycleCheck(G,v,v) <b>then</b></del>
+|  |        <del><b>return</b> false</del>
+|  |     <b>if</b> dfsCycleCheck(G,v,v) <b>then</b>
+|  |        <b>return</b> true
+|  |     <b>end if</b>
+|  |  <b>end if</b>
+|  <b>end for</b>
+|  <del><b>return</b> true</del>
+|  <b>return</b> false
+
+dfsCycleCheck(G,v,u):      // look for a cycle that does not go back directly to u
+|  mark v as visited
+|  <b>for each</b> (v,w)&isin;edges(G) <b>do</b>
+|  |  <b>if</b> w has not been visited <b>then</b>
+|  |     <b>return</b> dfsCycleCheck(G,w,v)
+|  |  <b>else if</b> w&ne;u <b>then</b>
+|  |     <b>return</b> true
+|  |  <b>end if</b>
+|  <b>end for</b>
+|  <b>return</b> false
+</pre>
+</div>
+
+<br>
+<li>(Connected components)
+
+<ol type="a">
+<li>
+<p>
+Write a C program that computes the connected components in a graph. The graph should be built from user input in the same way as in exercise 5 last week (i.e., problem set week 6). Your program should use the Graph ADT (<a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week03a/progs/Graph.h"><tt>Graph.h</tt></a>, <a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week03a/progs/Graph.c"><tt>Graph.c</tt></a>) from the lecture. These files should not be changed.
+</p>
+<p>An example of the program executing is shown below for the following graph:</p>
+<center><img src="Pic/components.png"></center>
+<br>
+<pre class="command_line">
+<kbd class="shell">./components</kbd>
+Enter the number of vertices:<b> 9</b>
+Enter an edge (from):<b> 0</b>
+Enter an edge (to):<b> 1</b>
+Enter an edge (from):<b> 1</b>
+Enter an edge (to):<b> 2</b>
+Enter an edge (from):<b> 4</b>
+Enter an edge (to):<b> 3</b>
+Enter an edge (from):<b> 6</b>
+Enter an edge (to):<b> 5</b>
+Enter an edge (from):<b> 6</b>
+Enter an edge (to):<b> 7</b>
+Enter an edge (from):<b> 5</b>
+Enter an edge (to):<b> 7</b>
+Enter an edge (from):<b> 5</b>
+Enter an edge (to):<b> 8</b>
+Enter an edge (from):<b> 7</b>
+Enter an edge (to):<b> 8</b>
+Enter an edge (from):<b> done</b>
+Finished.
+Number of components: 3
+Component 1:
+0
+1
+2
+Component 2:
+3
+4
+Component 3:
+5
+6
+7
+8
+</pre>
+</p>
+<p>Note that:
+<ul>
+<li> the vertices within a component are printed in ascending order
+<li> the components themselves are output in ascending order of their smallest node.
+</ul>
+<p>
+You may assume that a graph has a maximum of 1000 nodes.
+</p>
+<p>
+<i>We have created a script that can automatically test your program. To run this test you can execute the </i><tt>dryrun</tt><i> program that corresponds to the problem set and week. It expects to find a program named </i><tt>components.c</tt><i> in the current directory. You can use dryrun as follows:</i></p>
+<pre class="command_line">
+<kbd class="shell">~cs9024/bin/dryrun prob04</kbd>
+</pre>
+
+
+<li>
+<p>
+Consider the following graph with multiple components:
+</p>
+<center><img src="Pic/ccGraph.png"></center>
+<p>
+Assume a vertex-indexed connected components array <tt>cc[0..nV-1]</tt>
+that might form part of the
+<tt>Graph</tt> representation structure for this graph as suggested in the lecture:
+</p>
+<p>
+<pre>
+cc[] = {0,0,0,1,1,1,0,0,0,1}
+</pre>
+</p>
+<p>
+Show how the <tt>cc[]</tt> array would change if
+<ol>
+<li>edge <i>d</i> was removed
+<li>edge <i>b</i> was removed
+</ol>
+</p>
+
+<li>
+<p>
+Consider an adjacency matrix graph representation augmented by the two fields
+<ul>
+<li> <tt>nC</tt> &nbsp; (number of connected components)
+<li> <tt>cc[]</tt> &nbsp; (connected components array)
+</ul>
+</p>
+These fields are initialised as follows:
+<pre>
+newGraph(V):
+|  <b>Input</b>  number of nodes V
+|  <b>Output</b> new empty graph
+|
+|  g.nV=V, g.nE=0, <font color="blue">g.nC=V</font>
+|  allocate memory for g.edges[][]
+|  <b>for all</b> i=0..V-1 <b>do</b>
+|     <font color="blue">g.cc[i]=i</font>
+|     <b>for all</b> j=0..V-1 <b>do</b>
+|        g.edges[i][j]=0
+|     <b>end for</b>
+|  <b>end for</b>
+|  <b>return</b> g
+</pre>
+<p>
+Modify the pseudo-code for edge insertion and edge removal from the lecture (week 6) to maintain the two new fields.
+</p>
+</ol>
+
+<p><small>[<a id="q4a" href="##" onclick="toggleVisible('q4')">show answer</a>]</small></p>
+<div id="q4" style="color:#000099;display:none">
+<ol type="a">
+<li>
+<p>
+The following two functions together implement the algorithm from the lecture that uses the following strategy:
+<ul>
+<li> pick a not-yet-visited vertex
+<li> find all vertices reachable from that vertex
+<li> increment the count of connected components
+<li> repeat above until all vertices have been visited
+</ul>
+</p>
+<p>
+<pre class="answer">
+#define MAX_NODES 1000
+int componentOf[MAX_NODES];
+
+void dfsComponents(Graph g, int nV, int v, int id) {
+   componentOf[v] = id;
+   Vertex w;
+   for (w = 0; w < nV; w++)
+      if (adjacent(g, v, w) && componentOf[w] == -1)
+	 dfsComponents(g, nV, w, id);
+}
+
+// computes the connected component array
+// and returns the number of connected components
+int components(Graph g, int nV) {
+   Vertex v;
+   for (v = 0; v < nV; v++)
+      componentOf[v] = -1;
+
+   int compID = 0;
+   for (v = 0; v < nV; v++) {
+      if (componentOf[v] == -1) {
+	 dfsComponents(g, nV, v, compID);
+	 compID++;
+      }
+   }
+   return compID;
+}
+</pre>
+</p>
+Calling the function and printing the result:
+<pre class="answer">
+int i, c = components(g, nV);
+printf("Number of connected components: %d\n", c);
+for (i = 0; i < c; i++) {
+   printf("Component %d:\n", i+1);
+   Vertex v;
+   for (v = 0; v < nV; v++)
+      if (componentOf[v] == i)
+	 printf("%d\n", v);
+}
+</pre>
+
+<li><p> After removing <i>d</i>, <tt>cc[] = {0,0,0,1,1,1,0,0,0,1}</tt> &nbsp; (i.e. unchanged)
+<br>
+After removing <i>b</i>, <tt>cc[] = {0,0,2,1,1,1,2,0,2,1}</tt>
+</p>
+<li>
+Inserting an edge may reduce the number of connected components:
+<pre class="pseudocode">
+insertEdge(g,(v,w)):
+|  <b>Input</b> graph g, edge (v,w)
+|
+|  <b>if</b> g.edges[v][w]=0 <b>then</b>               // (v,w) not in graph
+|  |  g.edges[v][w]=1, g.edges[w][v]=1   // set to true
+|  |  g.nE=g.nE+1
+|  |  <b>if</b> g.cc[v]&ne;g.cc[w] <b>then</b>            // v,w in different components
+|  |  |  c=min{g.cc[v],g.cc[w]}          // &rArr; merge components c and d
+|  |  |  d=max{g.cc[v],g.cc[w]}
+|  |  |  <b>for all</b> vertices v&isin;g <b>do</b>
+|  |  |     <b>if</b> g.cc[v]=d <b>then</b>
+|  |  |        g.cc[v]=c                 // move node from component d to c
+|  |  |     <b>else if</b> g.cc[v]=g.nC-1 <b>then</b>
+|  |  |        g.cc[v]=d                 // replace largest component ID by d
+|  |  |     <b>end if</b>
+|  |  |  <b>end for</b>
+|  |  |  g.nC=g.nC-1
+|  |  <b>end if</b>
+|  <b>end if</b>
+</pre>
+</p>
+Removing an edge may increase the number of connected components:
+<pre class="pseudocode">
+removeEdge(g,(v,w)):
+|  <b>Input</b> graph g, edge (v,w)
+|
+|  <b>if</b> g.edges[v][w]&ne;0 <b>then</b>               // (v,w) in graph
+|  |  g.edges[v][w]=0, g.edges[w][v]=0   // set to false
+|  |  <b>if</b> &not;hasPath(g,v,w) <b>then</b>            // v,w no longer connected
+|  |     dfsNewComponent(g,v,g.nC)       // &rArr; put v + connected vertices into new component
+|  |     g.nC=g.nC+1
+|  |  <b>end if</b>
+|  <b>end if</b>
+
+dfsNewComponent(g,v,componentID):
+|  <b>Input</b> graph g, vertex v, new componentID for v and connected vertices
+|
+|  g.cc[v]=componentID
+|  <b>for all</b> vertices w adjacent to v <b>do</b>
+|     <b>if</b> g.cc[w]&ne;componentID <b>then</b>
+|        dfsNewComponent(g,w,componentID)
+|     <b>end if</b>
+|  <b>end if</b>
+</pre>
+</ol>
+</div>
+
+<br>
+<li> (Digraphs)
+
+<ol type="a">
+<li>
+<p>
+For each of the following graphs:
+</p>
+<center><img src="Pic/graph3.png"></center>
+<p>
+Show the concrete data structures if the graph was implemented via:
+</p>
+<ul>
+<li> adjacency matrix representation (assume full <i>V</i>&times;<i>V</i> matrix)
+<li> adjacency list representation (if non-directional, include both <i>(v,w)</i> and <i>(w,v)</i>)
+</ul>
+
+<li>
+<p>
+Consider the following map of streets in the Sydney CBD:
+</p><br>
+<center><img src="Pic/SydneyCBD.png"></center>
+<p>
+Represent this as a directed graph, where intersections are
+vertices and the connecting streets are edges. Ensure that
+the directions on the edges correctly reflect any one-way streets
+(this is a driving map, not a walking map).
+You only need to make a graph which includes the intersections
+marked with red letters
+Some things that don't show on the map: Castlereagh St is one-way
+heading south and Hunter St is one-way heading west.
+</p>
+<p>
+For each of the following pairs of intersections, indicate
+whether there is a path from the first to the second. Show a path if there is one. If there is more
+than one path, show two different paths.
+<ol>
+<li><p>
+from intersection "D" on Margaret St
+to insersection "L" on Pitt St
+</p></li>
+<li><p>
+from intersection "J" to the corner of Margaret St and York St
+(intersection "A")
+</p></li>
+<li><p>
+from the intersection of Margaret St and York St ("A")
+to the intersection of Hunter St and Castlereagh St ("M")
+</p></li>
+<li><p>
+from intersection "M" on Castlereagh St
+to intersection "H" on York St
+</ol>
+</ol>
+
+<p><small>[<a id="q5a" href="##" onclick="toggleVisible('q5')">show answer</a>]</small></p>
+<div id="q5" style="color:#000099;display:none">
+<ol type="a">
+<li><p>&nbsp;</p>
+<p><img src="Pic/graph3a.png"></p>
+<p><img src="Pic/graph3b.png"></p>
+
+<li>
+<p>
+The graph is as follows. Bi-directional edges are depicted as two-way arrows,
+rather than having two separate edges going in opposite directions.
+</p>
+<center><img src="Pic/SydneyGraph.png" style="background-color:#E8F8F5";></center>
+<p>
+For the paths:
+</p>
+<ol>
+<li><p>
+<nobr>D &rightarrow; E &rightarrow; G &rightarrow; L</nobr>
+and there are no other choices that don't involve loops through D
+</p></li>
+<li><p>
+<nobr>J &rightarrow; I &rightarrow; B &rightarrow; A</nobr>
+&nbsp; or &nbsp;
+<nobr>J &rightarrow; K &rightarrow; F &rightarrow; D &rightarrow; C &rightarrow; B &rightarrow;  A</nobr>
+<li><p>
+You can't reach M (or N or P) from A on this graph. Real-life is different, of course.
+</p></li>
+<li><p>
+<nobr>M &rightarrow; G &rightarrow; F &rightarrow; D &rightarrow; C &rightarrow; B  &rightarrow; A &rightarrow; H<nobr>
+&nbsp; or &nbsp;
+<nobr>M &rightarrow; G &rightarrow; F &rightarrow; K &rightarrow; J &rightarrow; I &rightarrow; H</nobr>
+</p></li>
+</ol>
+</ol>
+</div>
+
+<br>
+<li><b>Challenge Exercise</b>
+<p>
+Consider a machine with four wheels. Each wheel has the digits 0&hellip;9 printed clockwise on it. The current <i>state</i> of the machine is given by the four topmost digits <tt>abcd</tt>, e.g. 8056 in the picture below.
+</p>
+<center><img src="Pic/wheels.png"></center>
+<p>
+Each wheel can be controlled by two buttons: Pressing the button labelled with "&larr;" turns the corresponding wheel clockwise one digit ahead, whereas presssing "&rarr;" turns it anticlockwise one digit back.
+</p>
+Write a C-program to determine the <i>minimum</i> number of button presses required to transform
+</p>
+<ul>
+<li> a given initial state, <tt>abcd</tt>
+<li> to a given goal state, <tt>efgh</tt>
+<li> without passing through any of <i>n&ge;0</i> given "forbidden" states, <tt>forbidden[]={w<sub>1</sub>x<sub>1</sub>y<sub>1</sub>z<sub>1</sub>,&hellip;,w<sub>n</sub>x<sub>n</sub>y<sub>n</sub>z<sub>n</sub>}</tt>.
+</ul>
+<p>For example, the state 8056 as depicted can be transformed into 0056 in 2 steps if <tt>forbidden[]={}</tt>, whereas a minimum of 4 steps is needed for the same task if <tt>forbidden[]={9056}</tt>. (Why?)
+</p>
+<p>Use your program to compute the least number of button presses required to transform 8056 to 7012 if
+<ol type="a">
+<li>there are no forbidden states
+<li>you are not permitted to pass through any state 7055&ndash;8055 (i.e., 7055, 7056, &hellip;, 8055 all are forbidden)
+<li>you are not permitted to pass through any state 0000&ndash;0999 or 7055&ndash;8055
+</ol>
+</p>
+
+<p><small>[<a id="q6a" href="##" onclick="toggleVisible('q6')">show answer</a>]</small></p>
+<div id="q6" style="color:#000099;display:none">
+<p>The problem can be solved by a breadth-first search on an undirected graph:
+<ul>
+<li> nodes 0&hellip;9999 correspond to the possible configurations 0000 &ndash; 9999 of the machine;
+<li> edges connect nodes v and w if, and only if, one button press takes the machine from v to w and vice versa.
+</ul>
+</p>
+<p>The following code implements BFS on this graph with the help of the integer queue ADT from the lecture (<a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week02a/progs/queue.h"><tt>queue.h</tt></a>, <a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week02a/progs/queue.c"><tt>queue.c</tt></a>). Note that the graph is built <i>implicitly</i> : nodes are generated as they are encountered during the search.</p>
+<pre class="answer">
+#include "queue.h"
+
+int shortestPath(int source, int target, int forbidden[], int n) {
+   int visited[10000];
+
+   int i;
+   for (i = 0; i <= 9999; i++)
+      visited[i] = -1;             // mark all nodes as unvisited
+   for (i = 0; i < n; i++)
+      visited[forbidden[i]] = -2;  // mark forbidden nodes as visited => they won't be selected
+   visited[source] = source;
+   
+   queue Q = newQueue();
+   QueueEnqueue(Q, source);
+   bool found = (target == source);
+   while (!found && !QueueIsEmpty(Q)) {
+      int v = QueueDequeue(Q);
+      int wheel, turn;
+      for (wheel = 10; wheel <= 10000; wheel *= 10) {   // fancy way of generating the
+         for (turn = 1; turn <= 9; turn += 8) {         // eight neighbour configurations of v
+	    int w = wheel * (v / wheel) + (v % wheel + (wheel/10) * turn) % wheel;
+	    if (visited[w] == -1) {
+	       visited[w] = v;
+	       if (w == target)
+		  found = true;
+	       else
+		  QueueEnqueue(Q, w);
+	    }
+	 }
+      }
+   }
+   dropQueue(Q);
+   if (found) {                     // unwind path to determine length
+      int length = 0;
+      while (target != source) {
+         target = visited[target];  // move to predecessor on path
+         length++;
+      }
+      return length;
+   } else {
+      return -1;                    // no solution
+   }
+}
+</pre>
+<p>
+<ol type="a">
+<li> 9
+<li> 17
+<li> &infin; (unreachable)
+</ol>
+</p>
+</div>
+
+</ol>
+
+</body>
+</html>

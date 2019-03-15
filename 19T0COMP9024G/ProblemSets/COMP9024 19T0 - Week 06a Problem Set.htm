@@ -1,0 +1,379 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>COMP9024 19T0 - Week 06a Problem Set</title>
+<link rel='stylesheet' type='text/css' href='./course.css'><script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=AM_HTMLorMML">
+function changeText(el, newText) {
+  // Safari work around
+  if (el.innerText)
+    el.innerText = newText;
+  else if (el.firstChild && el.firstChild.nodeValue)
+    el.firstChild.nodeValue = newText;
+}
+function toggleVisible(elid) {
+  el1 = document.getElementById(elid);
+  el2 = document.getElementById(elid+"a");
+  if (el1.style.display == "") {
+     el1.style.display = "none";
+     changeText(el2,"show answer");
+  }
+  else {
+     el1.style.display = "";
+     changeText(el2,"hide answer");
+  }
+}
+</script></head>
+<body>
+<div align='center'>
+<table width='100%' border='0'>
+<tr valign='top'>
+<td align='left' width='25%'>
+  <span class='tiny'><a href="http://www.cse.unsw.edu.au/~cs9024/19T0/index.php">COMP9024 19T0</a></span>
+</td>
+<td align='center' width='50%'>
+  <span class='heading'>Week 06a Problem Set</span><br>
+  <span class='subheading'>Search Tree Data Structures and Algorithms</span>
+</td>
+<td align='right' width='25%'>
+  <span class='tiny'><a href="http://www.handbook.unsw.edu.au/postgraduate/courses/2019/COMP9024.html">Data Structures and Algorithms</a></span>
+</td>
+</table>
+</div><p style='text-align:center;font-size:75%'><a href='/~cs9024/19t0/probs/prob06a/index.php?view=qo'>[Show with no answers]</a> &nbsp; <a href='/~cs9024/19t0/probs/prob06a/index.php?view=all'>[Show with all answers]</a></div>
+
+<ol>
+
+<br>
+<li> (Tree properties)
+
+<ol type="a">
+
+<li>
+<p>
+Derive a formula for the minimum height of a binary search tree (BST) containing <i>n</i> nodes.
+Recall that the height is defined as the number of edges on a longest path from the root to a leaf.
+You might find it useful to start by considering the characteristics of a tree which has minimum height.
+The following diagram may help:
+</p>
+<center><img src="Pic/tree-heights.png"></center>
+</li>
+
+<li>
+<p>
+In the Binary Search Tree ADT (<a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week06a/progs/BSTree.h"><tt>BSTree.h</tt></a>, <a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week06a/progs/BSTree.c"><tt>BSTree.c</tt></a>) from the lecture, implement the function:
+</p>
+<pre>
+int TreeHeight(Tree t) { ... }
+</pre>
+<p>to compute the height of a tree.</p>
+</li>
+</ol>
+
+<p><small>[<a id="q1a" href="##" onclick="toggleVisible('q1')">show answer</a>]</small></p>
+<div id="q1" style="color:#000099;display:none">
+<ol type="a">
+
+<li>
+<p>
+A minimum height tree must be balanced.
+In a balanced tree, the height of the two subtrees
+differs by at most one.
+In a <em>perfectly</em> balanced tree, all leaves are at the same
+level.
+The single-node tree, and the two trees on the right in the
+diagram above are perfectly balanced trees.
+A perfectly balanced tree of height `h` has `n = 2^0 + 2^1 + ... + 2^h = 2^(h+1)-1` nodes. A perfectly balanced tree, therefore, satisfies `h = log_2 (n+1)-1`.
+</p>
+By inspection of the trees that are not perfectly balanced above,
+it is clear that as soon as an extra node is added to a perfectly
+balanced tree, the height will increase by 1. To maintain this
+height, all subsequent nodes must be added at the same level.
+The height will thus remain constant until we reach a new
+perfectly balanced state.
+It follows that for a tree with <i>n</i> nodes, the minimum height is `h = |~log_2 (n+1)~|-1`.
+</p>
+
+<li>
+<p>
+The following code uses the obvious recursive strategy:
+an empty tree is defined to be of height -1;
+a tree with a root node has height one plus the height
+of the highest subtree.
+<pre class="answer">
+int TreeHeight(Tree t) {
+   if (t == NULL) {
+      return -1;
+   } else {
+      int lheight = 1 + TreeHeight(left(t));
+      int rheight = 1 + TreeHeight(right(t));
+      if (lheight > rheight)
+	 return lheight;
+      else
+	 return rheight;
+   }
+}
+</pre>
+</ol>
+</div>
+</li>
+
+<br>
+<li> (Tree traversal)
+
+<p>
+Consider the following tree and its nodes displayed in
+different output orderings:
+</p>
+<center><img src="Pic/tree-orders.png"></center>
+<ol type="a">
+<li> <p>What kind of trees have the property that their infix output
+is the same as their prefix output?
+Are there any kinds of trees for which all four output orders will
+be the same?
+</p>
+<li>
+<p>
+  Design a recursive algorithm for prefix-, infix-, and postfix-order traversal of a binary search tree. Use pseudocode, and define a single function &nbsp;<tt>TreeTraversal(tree,style)</tt>, where <tt>style</tt> can be any of <tt>"NLR"</tt>, <tt>"LNR"</tt> or <tt>"LRN"</tt>.
+</pre>
+</p>
+</ol>
+
+<p><small>[<a id="q2a" href="##" onclick="toggleVisible('q2')">show answer</a>]</small></p>
+<div id="q2" style="color:#000099;display:none">
+<ol type="a">
+<li>
+<p>
+One obvious class of trees with this property is "right-deep" trees.
+Such trees have no left sub-trees on any node, e.g. ones that are built by
+inserting keys in ascending order.
+Essentially, they are linked-lists.
+</p>
+<p>
+Empty trees and trees with just one node have all output orders the same.
+</p>
+<li> A generic traversal algorithm:
+<pre style="pseudocode">
+TreeTraversal(tree,style):
+|  <b>Input</b> tree, style of traversal
+|
+|  <b>if</b> tree is not empty <b>then</b>
+|  |  <b>if</b> style="NLR" <b>then</b>
+|  |     <i>visit</i>(data(tree))
+|  |  <b>end if</b>
+|  |  TreeTraversal(left(tree),style)
+|  |  <b>if</b> style="LNR" <b>then</b>
+|  |     <i>visit</i>(data(tree))
+|  |  <b>end if</b>
+|  |  TreeTraversal(right(tree),style)
+|  |  <b>if</b> style="LRN" <b>then</b>
+|  |     <i>visit</i>(data(tree))
+|  |  <b>end if</b>
+|  <b>end if</b>
+</pre>
+</ol>
+</div>
+</li>
+
+<br>
+<li> (Insertion and deletion)
+
+<p>
+Answer the following questions without the help of the <tt>treeLab</tt> program from the lecture.
+</p>
+<ol type="a">
+<li>
+<p>Show the BST that results from inserting the following values into an empty tree in the order given:
+</p>
+<pre>
+6 2 4 10 12 8 1
+</pre>
+<p>
+Assume "at leaf" insertion.
+</p>
+</li>
+
+<li>
+<p>
+Let <tt>t</tt> be your answer to question a., and consider executing the following sequence of operations:
+</p>
+<pre>
+TreeDelete(t,12);
+TreeDelete(t,6);
+TreeDelete(t,2);
+TreeDelete(t,4);
+</pre>
+<p>
+Assume that deletion is handled by joining the two subtrees of the deleted
+node if it has two child nodes. Show the tree after each delete operation.
+</p>
+</ol>
+
+<p><small>[<a id="q3a" href="##" onclick="toggleVisible('q3')">show answer</a>]</small></p>
+<div id="q3" style="color:#000099;display:none">
+<center><img src="Pic/tree-ops.png"></center>
+</div>
+</li>
+
+<br>
+<li> (Insertion at root)
+
+<p>
+<ol type="a">
+<li> <p>
+Consider an initially empty BST and the sequence of values
+<pre>
+1 2 3 4 5 6
+</pre>
+</p>
+<ul>
+<li>Show the tree resulting from inserting these values "at leaf". What is its height?</p>
+<li>Show the tree resulting from inserting these values "at root". What is its height?</p>
+<li>Show the tree resulting from alternating between at-leaf-insertion and at-root-insertion. What is its height?</p>
+</ul>
+</li>
+
+<li>
+<p>
+Complete the Binary Search Tree ADT (<a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week06a/progs/BSTree.h"><tt>BSTree.h</tt></a>, <a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week06a/progs/BSTree.c"><tt>BSTree.c</tt></a>) from the lecture by an implementation of the function:
+</p>
+<pre>
+Tree insertAtRoot(Tree t, Item it) { ... }
+</pre>
+</li>
+</ol>
+<p>
+<i>We have created a script that can automatically test your program. To run this test you can execute the </i><tt>dryrun</tt><i> program that corresponds to the problem set and week. It expects to find a file named </i><tt>BSTree.c</tt><i> in the current directory. You can use dryrun as follows:</i></p>
+<pre class="command_line">
+<kbd class="shell">~cs9024/bin/dryrun prob06a</kbd>
+</pre>
+</p>
+<p>
+<i>Note: The </i><tt>dryrun</tt><i> script expects your program to include your implementation for Exercise 1.b.</i>
+</p>
+
+<p><small>[<a id="q4a" href="##" onclick="toggleVisible('q4')">show answer</a>]</small></p>
+<div id="q4" style="color:#000099;display:none">
+<ol type="a">
+<li> <p>At-leaf-insertion results in a "right-deep" tree while at-root insertion results in a "left-deep" tree. Both are fully degenerate trees of height 5.
+Alternating between the two styles of insertion results in a tree of height 3. Generally, if <i>n</i> ordered values are inserted into a BST in this way, then the resulting tree will be of height `|__n/2__|`.</p>
+<center><img src="Pic/root-insert.png"></center>
+<li>
+<pre class="answer">
+Tree insertAtRoot(Tree t, Item it) { 
+   if (t == NULL) {
+      t = newNode(it);
+   } else if (it < data(t)) {
+      left(t) = insertAtRoot(left(t), it);
+      t = rotateRight(t);
+   } else if (it > data(t)) {
+      right(t) = insertAtRoot(right(t), it);
+      t = rotateLeft(t);
+   }
+   return t;
+}
+</pre>
+</ol>
+</div>
+</li>
+
+<br>
+<li> (Rebalancing)
+
+<p>
+Trace the execution of <tt>rebalance(t)</tt> on the following tree. Show the tree after each rotate operation.
+<center><img src="Pic/bst.png"></center>
+</p>
+
+<p><small>[<a id="q5a" href="##" onclick="toggleVisible('q5')">show answer</a>]</small></p>
+<div id="q5" style="color:#000099;display:none">
+<p>
+In the answer below, any (sub-)tree <tt>t<sub>n</sub></tt> is identified by its root node <tt>n</tt>, e.g. <tt>t<sub>2</sub></tt> for the original tree.
+</p>
+<p>
+Rebalancing begins by calling <tt>partition(t<sub>2</sub>,3)</tt> since the original tree has 6 nodes. The call to <tt>partition(t<sub>2</sub>,3)</tt> leads to a series of recursive calls: <tt>partition(t<sub>4</sub>,2)</tt>, which calls <tt>partition(t<sub>6</sub>,1)</tt>, which in turn calls <tt>partition(t<sub>8</sub>,0)</tt>. The last call simply returns <tt>t<sub>8</sub></tt>, and then the following rotations are performed to complete each recursive call:
+<center><img src="Pic/bst-balance1.png"></center>
+Next, the new left subtree <tt>t<sub>2</sub></tt> gets balanced via <tt>partition(t<sub>2</sub>,1)</tt>, since this subtree has 3 nodes. Calling <tt>partition(t<sub>2</sub>,1)</tt> leads to the recursive call <tt>partition(t<sub>4</sub>,0)</tt>. The latter returns <tt>t<sub>4</sub></tt>, and then the following rotation is performed to complete the rebalancing of subtree <tt>t<sub>2</sub></tt>:
+<center><img src="Pic/bst-balance2.png"></center>
+The left and right subtrees of <tt>t<sub>4</sub></tt> have fewer than 3 nodes, hence will not be rebalanced further. Rebalancing continues with the right subtree <tt>t<sub>10</sub></tt>. Since this tree also has fewer than 3 nodes, rebalancing is finished.
+</div>
+</li>
+
+<br>
+<li><b>Challenge Exercise</b>
+<p>
+The function <tt>showTree()</tt> from the lecture displays a given BST sideways. A more attractive output would be to print a tree properly from the root down to the leaves. Design and implement a new function <tt>showTree(Tree t)</tt> for the Binary Search Tree ADT (<a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week06a/progs/BSTree.h"><tt>BSTree.h</tt></a>, <a href="https://www.cse.unsw.edu.au/~cs9024/19t0/slides/week06a/progs/BSTree.c"><tt>BSTree.c</tt></a>) to achieve this.
+<p>
+<em>
+Please email <a href="http://cgi.cse.unsw.edu.au/~mit/">me</a> your solution. The best solution will be added to our BST ADT implementation and used in the next lecture (week 11). Both the attractiveness of the visualisation and the simplicity of the code will be judged.
+</em>
+</p>
+
+<p><small>[<a id="q6a" href="##" onclick="toggleVisible('q6')">show answer</a>]</small></p>
+<div id="q6" style="color:#000099;display:none">
+Solution courtesy of Jin Qu:
+<ul>
+     <li> This implementation first computes the height h of the given BST, then converts the BST to an array of size 2<sup>h+1</sup> - 1, and finally goes through the array to display BST horizontally.
+     <li>I use an array of int pointers to distinguish nodes storing value 0 and NULL nodes.
+<ul>
+<li>The root is stored in array[0].
+<li>Assume a node is stored in array[i], then its left child is stored in array[2 * i + 1], its right child is stord in array[2 * i + 2].
+<li> If the BST is not perfectly balanced, then the missing nodes are represented as a NULL pointer in the array with corresponding index.
+</ul>
+<li> <tt>showTreeR()</tt> converts BST to array, as well as records the largest element in BST, in order to know the maximum width of a node to compute the indentation.
+<li> I assume that all nodes store non-negative numbers, if not, we can always add a number to all nodes and turn them to non-negative.
+<li> BST is traversed three times (calling <tt>TreeHeight()</tt>, calling <tt>showTreeR()</tt>, going through the array), so O(3 * 2<sup>h + 1</sup> - 1) = O(2<sup>h</sup>), or O(n) where n = number of nodes, h = height.
+</ul>
+<pre class="answer">
+#include &lt;math.h&gt;
+
+void showTreeR(Tree t, int index, int **record, int *largest) {
+   // record largest element along the way
+   if (t != NULL) {
+      record[index] = &data(t);
+      if (data(t) > *largest)
+         *largest = data(t);
+      showTreeR(left(t), 2 * index + 1, record, largest);
+      showTreeR(right(t), 2 * index + 2, record, largest);
+   }
+}
+
+void showTree(Tree t) {
+   int i, h = TreeHeight(t), largest = 0;
+
+   //use an array of pointers to distinguish NULL node and node with value 0
+   int **record = calloc(pow(2, h + 1) - 1, sizeof(int*));
+   assert(record != NULL);
+   showTreeR(t, 0, record, &largest);
+   int size, lv = 0;
+   if (largest)
+      size = floor(log10(largest)) + 1;
+   else
+      size = 1;
+   for (i = 0; i < pow(2, h + 1) - 1; i++) {
+      int space = size * ((int)(pow(2, h - lv + 1) - 1) / 2);
+      printf("%*s", space, "");
+
+      // centralize nodes
+      if (record[i]) {
+         printf("%*d", size, *record[i]);
+      } else {
+         printf("%*s", size, "");
+      }
+      printf("%*s", space + size, "");
+      if (i == pow(2, lv + 1) - 2) {
+         printf("\n\n");
+         lv++;
+      }
+   }
+   free(record);
+}
+</pre>
+<p>
+Special mention to Jingyi Zhang for his solution that uses a queue.
+</p>
+</div>
+</li>
+
+</ol>
+
+</body>
+</html>
