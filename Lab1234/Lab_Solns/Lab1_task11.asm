@@ -2,8 +2,6 @@
 
 ; Function: Calculating the greatest common divisor of two numbers: for minimum code size
 ; Created: 01/08/2018 15:46:27
-; Author: Juan Chen
-; Version number: 2
 
 
 .def	a = r16				;define a to be register r16
