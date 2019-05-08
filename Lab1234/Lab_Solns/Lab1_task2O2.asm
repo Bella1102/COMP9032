@@ -11,7 +11,7 @@
 .equ num = 1            ; define the value of num to 1(un-redefinable)
 
 .macro  calculate
-    adiw sumL, num      ; words add with num
+    adiw sumL, num      
 	mul sumL, aL        ; multiple the low 8bits of sum with the low 8bits of a
 	mov tempH, r1       ; temporarily store the high 8bits of result 
 	mov tempL, r0       ; temporarily store the low 8bits of result
@@ -21,7 +21,7 @@
 	mul sumL, aH        ; multiple the low 8bits of sum with the low 8bits of a
 	add tempH, r0       ; add the high 8bits of temp with r0
 	movw sumL, tempL    ; move word  sumH:sumL <- tempH:tempL
-    dec n               ; n - 1
+    dec n               
 .endmacro
 
 
@@ -32,6 +32,6 @@ main:
 
     calculate           ; calculating, go to macro running
 
-	rjmp main           ; jump to main
+	rjmp main          
 end:
 	rjmp end
