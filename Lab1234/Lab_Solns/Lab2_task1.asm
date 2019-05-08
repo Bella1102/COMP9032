@@ -2,7 +2,6 @@
 ; LAB2_1.asm
 ;
 ; Created: 2018/8/28 17:17:42
-; Author : Juan Chen
 ; Function: Converting a string to an integer
 
 .include "m2560def.inc"
@@ -16,7 +15,7 @@ s:	.db  "79345",0			;s[ ] = "12345"
 	ldi   r16,low(s)
 	ldi	  r17,high(s)
 	ldi   r19,high(65535)
-	rcall atoi				; Call function ¡®atoi¡¯ 
+	rcall atoi				; Call function Â¡Â®atoiÂ¡Â¯ 
 	movw  r27:r26,r21:r20	; Get the return result
 
 end: 
