@@ -1,9 +1,6 @@
 
 ; COMP9032 Lab1_Task2.asm
-
 ; Created: 12/08/2018
-; Author: Juan Chen
-; Version number: 3
 
 
 .def	n = r19					; n is a 8-bit unsigned integer
