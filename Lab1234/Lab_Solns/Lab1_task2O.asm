@@ -1,9 +1,5 @@
 ;
 ; Lab1_task2.asm
-;
-; Created: 2018/8/14 15:12:24
-; Author : juan chen
-; Version number: 2
 
 
 .dseg							; start the data segment
