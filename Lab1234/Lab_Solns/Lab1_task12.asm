@@ -1,9 +1,7 @@
 ; COMP9032 Lab1_task1_2.asm
 
-; Function: Calculating the greatest common divisor of two numbers£ºfor minimum execution time
+; Function: Calculating the greatest common divisor of two numbersÂ£Âºfor minimum execution time
 ; Created: 08/08/2018 15:56:20  
-; Author : Juan Chen
-; Version number: 3
 
 
 .def	 a = r16			 ;define a to be register r16
