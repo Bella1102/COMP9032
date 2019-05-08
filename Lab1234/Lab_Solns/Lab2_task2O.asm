@@ -2,7 +2,6 @@
 ; LAB2_task2.asm
 ;
 ; Created: 2018/8/28 14:12:00
-; Author : Juan Chen
 
 .include "m2560def.inc"
 .def     bit_positionL = r17           ; define low 8bits of bit_position
