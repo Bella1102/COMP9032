@@ -1,7 +1,7 @@
 ; Comp9032_task1_2
 ; Lab1.asm
 ;
-; Function: Calculating the greatest common divisor of two number: 
+; Function: Calculating the greatest common divisor of two number:
 ; (for minimun execution time)
 
 .def a=r16          ;definition r16 to a
