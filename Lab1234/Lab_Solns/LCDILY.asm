@@ -77,18 +77,8 @@ RESET:
 		; set second line address
 		do_lcd_command 0b11000000
 		do_lcd_data 'D'
-		do_lcd_data 'i'
-		do_lcd_data 'n'
-		do_lcd_data 'g'
-		do_lcd_data ' '
 		do_lcd_data 'X'
-		do_lcd_data 'i'
-		do_lcd_data 'a'
-		do_lcd_data 'o'
-		do_lcd_data ' '
 		do_lcd_data 'H'
-		do_lcd_data 'a'
-		do_lcd_data 'n'
 
 halt:
 		rjmp halt
